@@ -40,7 +40,7 @@ index % 2 === 0 ? "bg-[#f9e6e2]" : "bg-[#e7f2ed]";
       return (
         <article
           key={buddy.id}
-          className="group overflow-hidden rounded-[24px] border border-[#004c46]/10 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-[#004c46]/20 hover:shadow-[0_16px_35px_rgba(0,76,70,0.10)]"
+          className="group overflow-hidden rounded-[24px] border border-[#004c46]/20 md:border-[#004c46]/10 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-[#004c46]/20 shadow-[0_8px_17px_rgba(0,76,70,0.10)] md:shadow-none hover:shadow-[0_16px_35px_rgba(0,76,70,0.10)]"
         >
           <div
             className={`buddy-image relative aspect-square overflow-hidden ${imageBackground}`}
