@@ -105,7 +105,7 @@ index % 2 === 0 ? "bg-[#f9e6e2]" : "bg-[#e7f2ed]";
 
   {selected && (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-foreground/40 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-foreground/40 p-4 backdrop-blur-sm sm:items-center"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) {
           setSelected(null);
@@ -117,7 +117,7 @@ index % 2 === 0 ? "bg-[#f9e6e2]" : "bg-[#e7f2ed]";
         aria-modal="true"
         aria-labelledby="buddy-modal-title"
         aria-describedby="buddy-modal-description"
-        className="relative grid w-full max-w-md gap-4 rounded-2xl border border-border bg-background p-6 shadow-lg"
+        className="relative my-auto grid w-full max-w-md shrink-0 gap-4 rounded-2xl border border-border bg-background p-4 shadow-lg sm:p-6"
       >
         <img
           src={selected.image}
