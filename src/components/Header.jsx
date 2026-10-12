@@ -23,7 +23,6 @@ export default function Header({ blok, buddies = [] }) {
   const [selected, setSelected] = useState(null);
   const pathname = usePathname();
 
-  // Close dialogs and the mobile menu with Escape.
   useEffect(() => {
     function handleKeyDown(event) {
       if (event.key === "Escape") {
@@ -129,7 +128,6 @@ export default function Header({ blok, buddies = [] }) {
               ))}
             </nav>
 
-            {/* Search, favourites and mobile menu */}
             <div className="flex shrink-0 items-center gap-1">
               <button
                 type="button"
@@ -168,7 +166,7 @@ export default function Header({ blok, buddies = [] }) {
                 aria-controls="mobile-navigation"
                 className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl border border-border bg-white text-foreground transition-colors hover:bg-muted md:hidden"
               >
-                <div className="relative h-5 w-6">
+                <div className="relative h-6 w-6">
                   <span
                     className={`absolute left-0 top-1 h-0.5 w-6 bg-current transition-all duration-300 ${
                       open ? "translate-y-2 rotate-45" : ""
@@ -381,7 +379,7 @@ export default function Header({ blok, buddies = [] }) {
                         placeholder="Elephant, fox, dinosaur..."
                         value={query}
                         onChange={(event) => setQuery(event.target.value)}
-                        className="h-12 min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+                        className="h-12 min-w-0 flex-1 bg-transparent text-foreground outline-none placeholder:text-muted-foreground"
                       />
 
                       {query && (
