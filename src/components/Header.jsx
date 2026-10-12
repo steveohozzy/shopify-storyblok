@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -10,16 +11,21 @@ import {
   Search,
   X,
   ArrowLeft,
+  Bookmark,
+  Plus,
+  Check,
 } from "lucide-react";
 import { storyblokEditable } from "@storyblok/react/rsc";
 import { resolveLink } from "@/lib/storyblok";
 import { useBuddyFavourites } from "@/lib/useBuddyFavourites";
+import { useBuddyCollection } from "@/lib/useBuddyCollection";
 
 export default function Header({ blok, buddies = [] }) {
   const [open, setOpen] = useState(false);
   const [panel, setPanel] = useState(null);
   const [query, setQuery] = useState("");
   const { saved, toggleFavourite } = useBuddyFavourites(buddies);
+  const { collected, toggleCollection } = useBuddyCollection(buddies);
   const [selected, setSelected] = useState(null);
   const pathname = usePathname();
 
@@ -65,8 +71,16 @@ export default function Header({ blok, buddies = [] }) {
   }
 
   function openFavourites() {
+    setQuery("");
     setSelected(null);
     setPanel("saved");
+    setOpen(false);
+  }
+
+  function openCollection() {
+    setQuery("");
+    setSelected(null);
+    setPanel("collection");
     setOpen(false);
   }
 
@@ -75,10 +89,21 @@ export default function Header({ blok, buddies = [] }) {
       return false;
     }
 
-    const searchText =
-      `${buddy.name} ${buddy.category} ${buddy.description || ""}`.toLowerCase();
+    if (panel === "collection" && !collected.includes(buddy.id)) {
+      return false;
+    }
 
-    return searchText.includes(query.toLowerCase().trim());
+    const searchText = [
+      buddy.name,
+      buddy.category,
+      buddy.description,
+      buddy.line,
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+
+    return searchText.includes(query.toLowerCase());
   });
 
   return (
@@ -154,6 +179,22 @@ export default function Header({ blok, buddies = [] }) {
                 {saved.length > 0 && (
                   <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
                     {saved.length}
+                  </span>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={openCollection}
+                aria-label={`My collection (${collected.length})`}
+                title="My collection"
+                className="relative flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl text-foreground transition-colors hover:bg-muted hover:text-primary"
+              >
+                <Bookmark className="h-5 w-5" />
+
+                {collected.length > 0 && (
+                  <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
+                    {collected.length}
                   </span>
                 )}
               </button>
@@ -252,9 +293,38 @@ export default function Header({ blok, buddies = [] }) {
             </Link>
           ))}
         </nav>
+
+        <div className="grid grid-cols-2 gap-3 border-t border-border p-5">
+          <button
+            type="button"
+            onClick={openFavourites}
+            className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-border px-3 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+          >
+            <Heart className="h-4 w-4" />
+            Favourites ({saved.length})
+          </button>
+
+          <button
+            type="button"
+            onClick={openCollection}
+            className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-border px-3 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+          >
+            <Bookmark className="h-4 w-4" />
+            My collection ({collected.length})
+          </button>
+
+          <button
+            type="button"
+            onClick={openSearch}
+            className="col-span-2 flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary px-3 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+          >
+            <Search className="h-4 w-4" />
+            Find a buddy
+          </button>
+        </div>
       </aside>
 
-      {/* Search and favourites dialog */}
+      {/* Search, favourites and collection dialog */}
       {panel && (
         <div
           className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-foreground/40 px-4 py-8 backdrop-blur-sm sm:items-center"
@@ -279,13 +349,17 @@ export default function Header({ blok, buddies = [] }) {
                 >
                   {panel === "saved"
                     ? "Your favourite buddies"
-                    : "Find your buddy"}
+                    : panel === "collection"
+                      ? "My collection"
+                      : "Find your buddy"}
                 </h2>
 
                 <p className="mt-1 text-sm text-muted-foreground">
                   {panel === "saved"
                     ? "Your little cuddle collection."
-                    : "A little friend is waiting to meet you."}
+                    : panel === "collection"
+                      ? "The buddies you already own."
+                      : "A little friend is waiting to meet you."}
                 </p>
               </div>
 
@@ -328,7 +402,7 @@ export default function Header({ blok, buddies = [] }) {
                 </p>
 
                 <p className="mt-4 text-sm leading-relaxed text-foreground">
-                  {selected.description}
+                  {selected.description || selected.line}
                 </p>
 
                 <div className="mt-6 flex gap-3">
@@ -352,6 +426,7 @@ export default function Header({ blok, buddies = [] }) {
                         ? "Remove from favourites"
                         : "Add to favourites"
                     }
+                    title="Toggle favourite"
                     className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-full border border-border text-primary transition-colors hover:bg-muted"
                   >
                     <Heart
@@ -362,6 +437,32 @@ export default function Header({ blok, buddies = [] }) {
                           : "none"
                       }
                     />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => toggleCollection(selected.id)}
+                    aria-label={
+                      collected.includes(selected.id)
+                        ? "Remove from my collection"
+                        : "Add to my collection"
+                    }
+                    title={
+                      collected.includes(selected.id)
+                        ? "Remove from my collection"
+                        : "Add to my collection"
+                    }
+                    className={`flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-full border border-border transition-colors hover:bg-muted ${
+                      collected.includes(selected.id)
+                        ? "bg-primary text-primary-foreground"
+                        : "text-primary"
+                    }`}
+                  >
+                    {collected.includes(selected.id) ? (
+                      <Check className="h-5 w-5" />
+                    ) : (
+                      <Plus className="h-5 w-5" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -399,74 +500,114 @@ export default function Header({ blok, buddies = [] }) {
                 <div className="flex-1 overflow-y-auto p-4">
                   {results.length > 0 ? (
                     <div className="flex flex-col gap-2">
-                      {results.map((buddy) => (
-                        <div
-                          key={buddy.id}
-                          className="flex items-center gap-3 rounded-2xl p-2 transition-colors hover:bg-muted"
-                        >
-                          <button
-                            type="button"
-                            onClick={() => setSelected(buddy)}
-                            className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 text-left"
-                          >
-                            <img
-                              src={buddy.image}
-                              alt={buddy.name}
-                              className="h-16 w-16 shrink-0 rounded-xl bg-muted object-cover"
-                            />
+                      {results.map((buddy) => {
+                        const isSaved = saved.includes(buddy.id);
+                        const isCollected = collected.includes(buddy.id);
 
-                            <span className="min-w-0 flex-1">
-                              <span className="block truncate font-heading text-base font-bold text-foreground">
-                                {buddy.name}
+                        return (
+                          <div
+                            key={buddy.id}
+                            className="flex items-center gap-3 rounded-2xl p-2 transition-colors hover:bg-muted"
+                          >
+                            <button
+                              type="button"
+                              onClick={() => setSelected(buddy)}
+                              className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 text-left"
+                            >
+                              <img
+                                src={buddy.image}
+                                alt={buddy.name}
+                                className="h-16 w-16 shrink-0 rounded-xl bg-muted object-cover"
+                              />
+
+                              <span className="min-w-0 flex-1">
+                                <span className="block truncate font-heading text-base font-bold text-foreground">
+                                  {buddy.name}
+                                </span>
+
+                                <span className="mt-1 block text-xs text-muted-foreground">
+                                  {buddy.category}
+                                </span>
                               </span>
 
-                              <span className="mt-1 block text-xs text-muted-foreground">
-                                {buddy.category}
-                              </span>
-                            </span>
+                              <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+                            </button>
 
-                            <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground" />
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => toggleFavourite(buddy.id)}
-                            aria-label={
-                              saved.includes(buddy.id)
-                                ? `Remove ${buddy.name} from favourites`
-                                : `Add ${buddy.name} to favourites`
-                            }
-                            className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full text-primary transition-colors hover:bg-white"
-                          >
-                            <Heart
-                              className="h-5 w-5"
-                              fill={
-                                saved.includes(buddy.id)
-                                  ? "currentColor"
-                                  : "none"
+                            <button
+                              type="button"
+                              onClick={() => toggleFavourite(buddy.id)}
+                              aria-label={
+                                isSaved
+                                  ? `Remove ${buddy.name} from favourites`
+                                  : `Add ${buddy.name} to favourites`
                               }
-                            />
-                          </button>
-                        </div>
-                      ))}
+                              title={
+                                isSaved
+                                  ? "Remove favourite"
+                                  : "Add favourite"
+                              }
+                              className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full text-primary transition-colors hover:bg-white"
+                            >
+                              <Heart
+                                className="h-5 w-5"
+                                fill={isSaved ? "currentColor" : "none"}
+                              />
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => toggleCollection(buddy.id)}
+                              aria-label={
+                                isCollected
+                                  ? `Remove ${buddy.name} from my collection`
+                                  : `Add ${buddy.name} to my collection`
+                              }
+                              title={
+                                isCollected
+                                  ? "Remove from my collection"
+                                  : "Add to my collection"
+                              }
+                              className={`flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors hover:bg-white ${
+                                isCollected
+                                  ? " text-primary"
+                                  : "bg-primary text-primary text-primary-foreground"
+                              }`}
+                            >
+                              {isCollected ? (
+                                <Check className="h-5 w-5" />
+                              ) : (
+                                <Plus className="h-5 w-5" />
+                              )}
+                            </button>
+                          </div>
+                        );
+                      })}
                     </div>
                   ) : (
                     <div className="px-4 py-12 text-center">
-                      <Heart className="mx-auto h-8 w-8 text-muted-foreground/50" />
+                      {panel === "collection" ? (
+                        <Bookmark className="mx-auto h-8 w-8 text-muted-foreground/50" />
+                      ) : (
+                        <Heart className="mx-auto h-8 w-8 text-muted-foreground/50" />
+                      )}
 
                       <p className="mt-4 font-heading text-lg font-bold text-foreground">
                         {panel === "saved"
                           ? "No favourites just yet"
-                          : "No buddies found"}
+                          : panel === "collection"
+                            ? "Your collection is waiting"
+                            : "No buddies found"}
                       </p>
 
                       <p className="mt-2 text-sm text-muted-foreground">
                         {panel === "saved"
                           ? "Search for a buddy and tap the heart to save it here."
-                          : "Try another name or category, such as fox or dinosaur."}
+                          : panel === "collection"
+                            ? "Add buddies you already own using the plus button on their cards."
+                            : "Try another name or category, such as fox or dinosaur."}
                       </p>
 
-                      {panel === "saved" && (
+                      {(panel === "saved" || panel === "collection") && (
                         <button
                           type="button"
                           onClick={openSearch}
@@ -483,7 +624,9 @@ export default function Header({ blok, buddies = [] }) {
                   <p className="text-xs text-muted-foreground">
                     {panel === "saved"
                       ? `${results.length} favourite${results.length === 1 ? "" : "s"}`
-                      : `${results.length} buddy${results.length === 1 ? "" : "ies"} found`}
+                      : panel === "collection"
+                        ? `${results.length} buddy${results.length === 1 ? "" : "ies"} in your collection`
+                        : `${results.length} buddy${results.length === 1 ? "" : "ies"} found`}
                   </p>
                 </div>
               </>
