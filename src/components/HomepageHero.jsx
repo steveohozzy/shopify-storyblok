@@ -46,7 +46,7 @@ export default function HomeHero({ blok }) {
         <div className="relative mx-auto grid min-h-[550px] max-w-7xl grid-cols-1 items-center px-4 py-10 sm:min-h-[600px] sm:px-10 sm:py-16 lg:min-h-[550px] lg:grid-cols-2 lg:px-14 lg:py-20">
           <div className="relative z-10 max-w-[450px]">
             {blok.Tagline && (
-              <div className="mb-6 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.04em] text-[#004c46] sm:text-xs">
+              <div className="mb-6 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.04em] text-[#004c46] sm:text-xs drop-shadow-[0_2px_2px_rgba(255,255,255,0.8)]">
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -73,7 +73,7 @@ export default function HomeHero({ blok }) {
             </h1>
 
             {blok.Subtitle && (
-              <p className="hidden md:block mt-6 max-w-[300px] whitespace-pre-line text-base leading-[1.8] text-[#004c46] sm:text-lg">
+              <p className="hidden md:block mt-6 max-w-[300px] whitespace-pre-line text-base leading-[1.8] text-[#004c46] sm:text-lg drop-shadow-[0_2px_2px_rgba(255,255,255,0.8)]">
                 {blok.Subtitle}
               </p>
             )}
@@ -82,7 +82,7 @@ export default function HomeHero({ blok }) {
               <div className="mt-7 flex flex-wrap gap-3">
                 <Link
                   href={resolveLink(blok.CtaPrimaryLink) || "#"}
-                  className="group inline-flex min-h-12 items-center justify-center gap-3 rounded-full bg-[#00594f] px-6 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#003f39]"
+                  className="group inline-flex min-h-12 items-center justify-center gap-3 rounded-full bg-[#00594f] px-6 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#003f39] drop-shadow-[0_2px_2px_rgba(255,255,255,0.8)]"
                 >
                   {blok.CtaPrimaryText}
                   <span
