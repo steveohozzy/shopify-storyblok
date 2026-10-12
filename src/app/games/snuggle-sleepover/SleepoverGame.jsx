@@ -54,13 +54,23 @@ const ACCESSORIES = [
   { name: "Dream Cloud", emoji: "☁️" },
 ];
 
+
 const NIGHT_STARS = [
-  { x: "12%", y: "20%" },
-  { x: "30%", y: "40%" },
-  { x: "49%", y: "17%" },
-  { x: "72%", y: "32%" },
-  { x: "87%", y: "15%" },
+  { x: "14%", y: "39%", delay: "0.7s" },
+  { x: "78%", y: "47%", delay: "1.9s" },
+  { x: "42%", y: "61%", delay: "1.2s" },
+  { x: "88%", y: "23%", delay: "2.5s" },
+  { x: "23%", y: "73%", delay: "0.3s" },
 ];
+
+const SKY_STARS = Array.from({ length: 65 }, (_, index) => ({
+  x: `${((index * 47 + 13) % 97) + 1}%`,
+  y: `${((index * 31 + 7) % 88) + 2}%`,
+  size: index % 7 === 0 ? 4 : index % 3 === 0 ? 3 : 2,
+  opacity: index % 4 === 0 ? 0.8 : index % 3 === 0 ? 0.55 : 0.3,
+  delay: `${(index % 9) * 0.45}s`,
+}));
+
 
 function CartoonBuddy({ animal, className = "" }) {
   const buddy = BUDDIES.find((item) => item.animal === animal) || BUDDIES[0];
@@ -476,40 +486,178 @@ export default function SleepoverGame() {
 
         {step === "stars" && story && (
           <section className="mx-auto max-w-3xl overflow-hidden rounded-[32px] border border-[#004c46]/10 bg-white shadow-lg">
-            <div className="relative min-h-[390px] overflow-hidden bg-gradient-to-b from-[#26345e] to-[#625d91] p-6 text-center text-white sm:min-h-[440px]">
-              <span className="absolute right-[10%] top-[12%] text-4xl text-[#fff5cf]">☾</span>
-              <span className="absolute left-[9%] top-[17%] text-xl">✦</span>
-              <span className="absolute left-[29%] top-[10%] text-lg">✧</span>
-              <div className="relative z-10 mx-auto w-36 rounded-full bg-white/15 p-2">
+            <div className="relative min-h-[430px] overflow-hidden bg-gradient-to-b from-[#111a3d] via-[#303866] to-[#716b9f] p-6 text-center text-white sm:min-h-[470px]">
+              {/* Soft moonlight */}
+              <div className="pointer-events-none absolute -right-12 -top-16 h-56 w-56 rounded-full bg-[#b9c9ff]/10 blur-3xl" />
+              <div className="pointer-events-none absolute -bottom-20 left-1/4 h-64 w-64 rounded-full bg-[#c4a6ee]/15 blur-3xl" />
+
+              {/* Full background starfield */}
+              <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                {SKY_STARS.map((star, index) => (
+                  <span
+                    key={index}
+                    className="absolute rounded-full bg-[#fff5cf] animate-[pulse_3s_ease-in-out_infinite]"
+                    style={{
+                      left: star.x,
+                      top: star.y,
+                      width: `${star.size}px`,
+                      height: `${star.size}px`,
+                      opacity: star.opacity,
+                      animationDelay: star.delay,
+                      boxShadow:
+                        star.size === 4
+                          ? "0 0 8px rgba(255,245,207,0.5)"
+                          : "none",
+                    }}
+                  />
+                ))}
+
+                {/* Little constellation */}
+                <svg
+                  className="absolute left-[8%] top-[35%] h-20 w-24 opacity-30 sm:left-[12%]"
+                  viewBox="0 0 100 80"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M10 18 L39 42 L70 12 L89 58"
+                    stroke="#fff5cf"
+                    strokeWidth="1"
+                    strokeDasharray="3 5"
+                  />
+                  <circle cx="10" cy="18" r="2" fill="#fff5cf" />
+                  <circle cx="39" cy="42" r="2" fill="#fff5cf" />
+                  <circle cx="70" cy="12" r="2" fill="#fff5cf" />
+                  <circle cx="89" cy="58" r="2" fill="#fff5cf" />
+                </svg>
+
+                {/* Shooting star */}
+                <div className="absolute left-[-30%] top-[29%] h-px w-24 rotate-[-25deg] bg-gradient-to-r from-transparent via-white to-transparent opacity-70 animate-[shooting-star_7s_ease-in-out_infinite]" />
+              </div>
+
+              {/* Moon */}
+              <span className="pointer-events-none absolute right-[9%] top-[8%] z-[1] text-4xl text-[#fff5cf] drop-shadow-[0_0_18px_rgba(255,245,207,0.45)]">
+                ☾
+              </span>
+
+              {/* Buddy and story */}
+              <div className="relative z-10 mx-auto w-28 rounded-full bg-white/10 p-1.5 backdrop-blur-sm sm:w-32">
                 <CartoonBuddy animal={buddy.animal} className="w-full" />
               </div>
-              <h2 className="relative z-10 mt-3 font-heading text-2xl font-bold sm:text-3xl">{story.title}</h2>
+
+              <h2 className="relative z-10 mt-3 font-heading text-2xl font-bold sm:text-3xl">
+                {story.title}
+              </h2>
+
               <p className="relative z-10 mx-auto mt-2 max-w-md text-sm text-white/80">
-                Tap all five glowing stars to make a wish before bedtime.
+                Five wishing stars are hiding in the night sky. Can you spot them all?
               </p>
-              {NIGHT_STARS.map((item, index) => (
-                <button key={index} disabled={caughtStars.includes(index)} onClick={() => setCaughtStars((current) => current.includes(index) ? current : [...current, index])}
-                  aria-label={`Catch star ${index + 1}`}
-                  className={`absolute z-20 flex h-12 w-12 items-center justify-center rounded-full text-3xl transition-all ${
-                    caughtStars.includes(index) ? "scale-0 opacity-0" : "animate-[pulse_1.8s_ease-in-out_infinite] text-[#fff5cf] drop-shadow-[0_0_12px_rgba(255,245,207,0.8)] hover:scale-125"
-                  }`} style={{ left: item.x, top: item.y }}>★</button>
-              ))}
+
+              {/* Collectible stars */}
+              {NIGHT_STARS.map((item, index) => {
+                const caught = caughtStars.includes(index);
+
+                return (
+                  <button
+                    key={index}
+                    type="button"
+                    disabled={caught}
+                    onClick={() =>
+                      setCaughtStars((current) =>
+                        current.includes(index) ? current : [...current, index]
+                      )
+                    }
+                    aria-label={`Catch hidden star ${index + 1}`}
+                    className={`absolute z-20 flex h-11 w-11 items-center justify-center rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
+                      caught
+                        ? "scale-0 opacity-0"
+                        : "text-[#f8eec1] hover:scale-110"
+                    }`}
+                    style={{
+                      left: item.x,
+                      top: item.y,
+                      animation: caught
+                        ? "none"
+                        : `hidden-star-twinkle 3.5s ease-in-out ${item.delay} infinite`,
+                    }}
+                  >
+                    <span
+                      className="text-[22px] transition-all duration-300"
+                      style={{
+                        textShadow:
+                          "0 0 3px rgba(255,245,207,0.5), 0 0 8px rgba(255,245,207,0.3)",
+                      }}
+                    >
+                      ★
+                    </span>
+                  </button>
+                );
+              })}
+
+              {/* Completion message */}
               {caughtStars.length === NIGHT_STARS.length && (
-                <div className="absolute inset-0 z-30 flex items-center justify-center bg-[#26345e]/90 p-5">
+                <div className="absolute inset-0 z-30 flex items-center justify-center bg-[#171d43]/90 p-5 backdrop-blur-md">
                   <div className="w-full max-w-sm rounded-[28px] border-4 border-white bg-[#fffaf4] p-6 text-center text-[#004c46] shadow-2xl">
                     <Sparkles className="mx-auto mb-3 text-[#d6a33b]" size={36} />
-                    <h3 className="font-heading text-2xl font-bold">You caught them all!</h3>
-                    <p className="mt-2 text-sm text-[#004c46]/70">Five magical stars for your buddy's dreams.</p>
-                    <button onClick={() => setStep("bedtime")} className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#00594f] px-5 py-3 text-sm font-bold text-white hover:bg-[#003f39]">
-                      Get ready for bed <ArrowRight size={17} />
+
+                    <h3 className="font-heading text-2xl font-bold">
+                      You caught them all!
+                    </h3>
+
+                    <p className="mt-2 text-sm text-[#004c46]/70">
+                      Five magical stars for {buddy.name}'s sweetest dreams.
+                    </p>
+
+                    <div className="my-4 flex justify-center gap-2">
+                      {NIGHT_STARS.map((item, index) => (
+                        <span
+                          key={index}
+                          className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#fff0bd] text-[#b88924]"
+                        >
+                          <Star size={19} fill="currentColor" />
+                        </span>
+                      ))}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setStep("bedtime")}
+                      className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#00594f] px-5 py-3 text-sm font-bold text-white hover:bg-[#003f39]"
+                    >
+                      Get ready for bed
+                      <ArrowRight size={17} />
                     </button>
                   </div>
                 </div>
               )}
             </div>
-            <div className="flex items-center justify-between p-5">
-              <div><p className="font-bold">Sleepy stars</p><p className="text-xs text-[#004c46]/65">{caughtStars.length} of 5 collected</p></div>
-              <div className="flex gap-1.5">{NIGHT_STARS.map((item, index) => <span key={index} className={`flex h-8 w-8 items-center justify-center rounded-full ${caughtStars.includes(index) ? "bg-[#fff0bd] text-[#b88924]" : "bg-[#e7f2ed] text-[#004c46]/25"}`}><Star size={17} fill={caughtStars.includes(index) ? "currentColor" : "none"} /></span>)}</div>
+
+            {/* Star collection progress */}
+            <div className="flex items-center justify-between gap-3 p-5">
+              <div>
+                <p className="font-bold">Sleepy stars</p>
+                <p className="text-xs text-[#004c46]/65">
+                  {caughtStars.length} of 5 collected
+                </p>
+              </div>
+
+              <div className="flex gap-1.5">
+                {NIGHT_STARS.map((item, index) => (
+                  <span
+                    key={index}
+                    className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
+                      caughtStars.includes(index)
+                        ? "bg-[#fff0bd] text-[#b88924]"
+                        : "bg-[#e7f2ed] text-[#004c46]/25"
+                    }`}
+                  >
+                    <Star
+                      size={17}
+                      fill={caughtStars.includes(index) ? "currentColor" : "none"}
+                    />
+                  </span>
+                ))}
+              </div>
             </div>
           </section>
         )}

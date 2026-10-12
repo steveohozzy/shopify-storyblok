@@ -121,3 +121,33 @@ body {
 .animate-blob {
   animation: blob 8s ease-in-out infinite;
 }
+
+
+@keyframes hidden-star-twinkle {
+  0%, 100% {
+    opacity: 0.45;
+    filter: brightness(0.8);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.4);
+  }
+}
+
+@keyframes shooting-star {
+  0%, 70% {
+    transform: translate(0, 0) rotate(-25deg);
+    opacity: 0;
+  }
+  74% {
+    opacity: 0.8;
+  }
+  88% {
+    transform: translate(130vw, 90px) rotate(-25deg);
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
