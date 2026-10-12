@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
-import BuddyGrid from "@/components/BuddyGrid";
+import BuddyGridPage from "@/components/BuddyGridPage";
 
 export default function BuddiesPageClient({
 buddies = [],
@@ -16,17 +16,18 @@ const [query, setQuery] = useState("");
 const [category, setCategory] = useState("All buddies");
 
 const categories = useMemo(() => {
-const buddyCategories = buddies
-.map((buddy) => buddy.category)
-.filter(Boolean);
+  const buddyCategories = buddies
+    .flatMap((buddy) =>
+      (buddy.category || "")
+        .split(",")
+        .map((category) => category.trim())
+        .filter(Boolean)
+    );
 
-
-return [
-  "All buddies",
-  ...new Set(buddyCategories),
-];
-
-
+  return [
+    "All buddies",
+    ...new Set(buddyCategories),
+  ];
 }, [buddies]);
 
 useEffect(() => {
@@ -48,11 +49,34 @@ if (
 const items = useMemo(() => {
 const search = query.trim().toLowerCase();
 
+console.table(
+  buddies
+    .filter((buddy) => {
+      const buddyCategories = (buddy.category || "")
+        .split(",")
+        .map((item) => item.trim());
+
+      return (
+        category === "All buddies" ||
+        buddyCategories.includes(category)
+      );
+    })
+    .map((buddy) => ({
+      name: buddy.name,
+      id: buddy.id,
+      category: buddy.category,
+    }))
+);
+
 
 return buddies.filter((buddy) => {
+  const buddyCategories = (buddy.category || "")
+    .split(",")
+    .map((item) => item.trim());
+
   const matchesCategory =
     category === "All buddies" ||
-    buddy.category === category;
+    buddyCategories.includes(category);
 
   const searchableText = [
     buddy.name,
@@ -162,7 +186,7 @@ const isActive = item === category;
   </p>
 
   {items.length > 0 ? (
-    <BuddyGrid items={items} />
+    <BuddyGridPage items={items} />
   ) : (
     <div className="py-12 text-center">
       <p className="mb-4 text-muted-foreground">

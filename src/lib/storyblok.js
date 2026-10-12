@@ -24,6 +24,7 @@ import HeroStatement from "@/components/HeroStatement";
 import BrandValues from "@/components/BrandVaues";
 import PageIntro from "@/components/PageIntro";
 import RetailerSection from "@/components/RetailerSection";
+import RecycledMaterials from "@/components/RecycledMaterials";
 
 import { apiPlugin, storyblokInit } from "@storyblok/react";
 
@@ -53,6 +54,7 @@ export const components = {
   BrandValues: BrandValues,
   PageIntro: PageIntro,
   RetailerSection: RetailerSection,
+  RecycledMaterials: RecycledMaterials,
 };
 
 export const getStoryblokApi = storyblokInit({

@@ -13,7 +13,7 @@ const href =
 resolveLink(blok.CtaLink) ||
 "https://www.thetoyshop.com/search/?text=snuggle%20buddies";
 
-const isExternal = /^https?:///i.test(href);
+const isExternal = blok.CtaLink?.linktype === "url";
 
 const buttonClass =
 "group inline-flex min-h-12 items-center justify-center gap-3 rounded-full bg-[#00594f] px-6 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#003f39]";
