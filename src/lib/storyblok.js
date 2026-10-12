@@ -20,6 +20,10 @@ import BuddiesSection from "@/components/BuddiesSection";
 import BuddiesPage from "@/components/BuddiesPage";
 import BuddiesCategoryLinks from "@/components/BuddiesCategoryLinks";
 import SnuggleEndNote from "@/components/SnuggleEndNote";
+import HeroStatement from "@/components/HeroStatement";
+import BrandValues from "@/components/BrandVaues";
+import PageIntro from "@/components/PageIntro";
+import RetailerSection from "@/components/RetailerSection";
 
 import { apiPlugin, storyblokInit } from "@storyblok/react";
 
@@ -45,6 +49,10 @@ export const components = {
   buddiesPage: BuddiesPage,
   buddiesCategoryLinks: BuddiesCategoryLinks,
   snuggleEndNote: SnuggleEndNote,
+  HeroStatement: HeroStatement,
+  BrandValues: BrandValues,
+  PageIntro: PageIntro,
+  RetailerSection: RetailerSection,
 };
 
 export const getStoryblokApi = storyblokInit({

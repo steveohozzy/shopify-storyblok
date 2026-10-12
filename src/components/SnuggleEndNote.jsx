@@ -31,9 +31,9 @@ className="px-4 py-16 text-[#004c46] md:px-8 md:py-20"
      />
 
 
-    <h2 className="font-heading text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
+    <h3 className="font-heading text-2xl font-bold leading-tight sm:text-3xl lg:text-4xl">
       {title}
-    </h2>
+    </h3>
 
     {description && (
       <p className="mt-5 max-w-xl whitespace-pre-line text-base leading-[1.8] text-[#004c46] sm:text-lg">
