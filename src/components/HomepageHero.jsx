@@ -62,7 +62,7 @@ export default function HomeHero({ blok }) {
               </div>
             )}
 
-            <h1 className="font-heading text-6xl font-bold leading-[0.95] sm:text-7xl lg:text-[76px]">
+            <h1 className="font-heading text-6xl font-bold leading-[0.95] sm:text-7xl lg:text-[76px] drop-shadow-[0_2px_2px_rgba(255,255,255,0.8)]">
               {blok.Title}
               {blok.TitleAccent && (
                 <>
