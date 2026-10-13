@@ -1,669 +1,473 @@
+
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 
-const TOYS = [
+const BUDDIES = [
   {
-    emoji: "🧸",
-    name: "Teddy Bear",
-    colour: "from-[#FF0073] to-[#FF3D9A]",
-    animation: "toy-teddy",
+    id: "fox",
+    name: "Fabian Fox",
+    animal: "fox",
+    colour: "#ed9b62",
+    ears: "#bd6448",
+    muzzle: "#fff5e9",
   },
   {
-    emoji: "🚗",
-    name: "Toy Car",
-    colour: "from-[#0B9FEE] to-[#38C8FF]",
-    animation: "toy-car",
+    id: "bunny",
+    name: "Bella Bunny",
+    animal: "bunny",
+    colour: "#e9c6cf",
+    ears: "#d991a9",
+    muzzle: "#fff7f3",
   },
   {
-    emoji: "🦖",
-    name: "Dinosaur",
-    colour: "from-[#22C55E] to-[#84CC16]",
-    animation: "toy-dinosaur",
-  },
-  {
-    emoji: "🚀",
-    name: "Rocket",
-    colour: "from-[#7C3AED] to-[#A855F7]",
-    animation: "toy-rocket",
-  },
-  {
-    emoji: "🦄",
-    name: "Unicorn",
-    colour: "from-[#EC4899] to-[#A855F7]",
-    animation: "toy-unicorn",
-  },
-  {
-    emoji: "🤖",
-    name: "Robot",
-    colour: "from-[#64748B] to-[#0EA5E9]",
-    animation: "toy-robot",
-  },
-  {
-    emoji: "🎈",
-    name: "Balloon",
-    colour: "from-[#FFB800] to-[#FF7300]",
-    animation: "toy-balloon",
+    id: "badger",
+    name: "Brooke Badger",
+    animal: "badger",
+    colour: "#9295a5",
+    ears: "#666b80",
+    muzzle: "#f7f2ed",
   },
 ];
 
-export default function NotFound() {
-  const [toy, setToy] = useState(null);
-  const [toyNumber, setToyNumber] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [toyAnimation, setToyAnimation] = useState(false);
-
-  const makeToy = () => {
-    if (isPlaying) return;
-
-    setIsPlaying(true);
-    setToy(null);
-    setToyAnimation(false);
-
-    window.setTimeout(() => {
-      const nextToy = TOYS[Math.floor(Math.random() * TOYS.length)];
-
-      setToy(nextToy);
-      setToyNumber((number) => number + 1);
-      setIsPlaying(false);
-    }, 500);
-  };
-
-  const playToy = () => {
-    if (!toy || toyAnimation || isPlaying) return;
-
-    setToyAnimation(true);
-
-    window.setTimeout(() => {
-      setToyAnimation(false);
-    }, 1100);
-  };
+function BuddyHead({ animal, className = "" }) {
+  const buddy =
+    BUDDIES.find((item) => item.animal === animal) || BUDDIES[0];
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-[#34156F] via-[#5B21B6] to-[#1D4ED8] px-5 py-8 text-white sm:px-6">
+    <svg
+      viewBox="0 0 220 170"
+      role="img"
+      aria-label={buddy.name}
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {animal === "fox" && (
+        <>
+          <path
+            d="M54 78 L39 12 Q37 4 47 10 L91 48 Z"
+            fill={buddy.colour}
+            stroke={buddy.ears}
+            strokeWidth="4"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M166 78 L181 12 Q183 4 173 10 L129 48 Z"
+            fill={buddy.colour}
+            stroke={buddy.ears}
+            strokeWidth="4"
+            strokeLinejoin="round"
+          />
+          <path d="M53 48 L47 22 L76 49 Z" fill="#f9d0b4" />
+          <path d="M167 48 L173 22 L144 49 Z" fill="#f9d0b4" />
+        </>
+      )}
 
-      {/* =====================================================
-          BACKGROUND
-      ===================================================== */}
+      {animal === "bunny" && (
+        <>
+          <path
+            d="M70 76 Q40 -15 69 4 Q96 8 99 75 Z"
+            fill={buddy.colour}
+            stroke={buddy.ears}
+            strokeWidth="4"
+          />
+          <path
+            d="M150 76 Q180 -15 151 4 Q124 8 121 75 Z"
+            fill={buddy.colour}
+            stroke={buddy.ears}
+            strokeWidth="4"
+          />
+          <path d="M72 54 Q56 12 69 17 Q85 21 91 60 Z" fill="#f7aebf" />
+          <path d="M148 54 Q164 12 151 17 Q135 21 129 60 Z" fill="#f7aebf" />
+        </>
+      )}
 
-      <div className="pointer-events-none absolute -left-40 top-0 h-[30rem] w-[30rem] rounded-full bg-[#FF0073]/40 blur-[120px]" />
+      {animal === "badger" && (
+        <>
+          <path
+            d="M60 75 Q36 35 61 34 Q83 35 87 69 Z"
+            fill={buddy.colour}
+            stroke={buddy.ears}
+            strokeWidth="4"
+          />
+          <path
+            d="M160 75 Q184 35 159 34 Q137 35 133 69 Z"
+            fill={buddy.colour}
+            stroke={buddy.ears}
+            strokeWidth="4"
+          />
+        </>
+      )}
 
-      <div className="pointer-events-none absolute -right-40 top-20 h-[28rem] w-[28rem] rounded-full bg-[#FF7300]/30 blur-[120px]" />
+      <ellipse
+        cx="110"
+        cy="99"
+        rx="68"
+        ry="65"
+        fill={buddy.colour}
+        stroke={buddy.ears}
+        strokeWidth="4"
+      />
 
-      <div className="pointer-events-none absolute bottom-0 left-1/3 h-[25rem] w-[25rem] rounded-full bg-[#0B9FEE]/30 blur-[120px]" />
+      {animal === "badger" && (
+        <>
+          <path
+            d="M99 40 L108 37 L110 88 L91 117 L80 112 L100 83 Z"
+            fill="#f7f4f0"
+          />
+          <path
+            d="M121 40 L112 37 L110 88 L129 117 L140 112 L120 83 Z"
+            fill="#f7f4f0"
+          />
+        </>
+      )}
 
-      {/* Floating shapes */}
+      {animal === "fox" && (
+        <path
+          d="M59 87 Q110 124 161 87 L151 119 Q110 151 69 119 Z"
+          fill="#fff3e7"
+        />
+      )}
 
-      <div className="pointer-events-none absolute left-[6%] top-[14%] h-16 w-16 rotate-12 rounded-[1.5rem] bg-[#FF0073] shadow-2xl shadow-pink-500/30 sm:h-20 sm:w-20" />
+      <ellipse cx="85" cy="94" rx="7" ry="9" fill="#45352f" />
+      <ellipse cx="135" cy="94" rx="7" ry="9" fill="#45352f" />
+      <circle cx="87" cy="91" r="2.5" fill="white" />
+      <circle cx="137" cy="91" r="2.5" fill="white" />
 
-      <div className="pointer-events-none absolute right-[8%] top-[17%] h-12 w-12 rounded-full bg-[#0B9FEE] shadow-xl shadow-blue-400/30 sm:h-14 sm:w-14" />
+      <ellipse cx="67" cy="113" rx="12" ry="7" fill="#f3a7ad" opacity=".7" />
+      <ellipse cx="153" cy="113" rx="12" ry="7" fill="#f3a7ad" opacity=".7" />
 
-      <div className="pointer-events-none absolute bottom-[13%] left-[8%] h-12 w-12 rotate-45 rounded-2xl bg-[#FFB800] shadow-xl shadow-yellow-400/30 sm:h-16 sm:w-16" />
+      <ellipse cx="110" cy="119" rx="29" ry="20" fill={buddy.muzzle} />
+      <ellipse cx="110" cy="113" rx="6" ry="4.5" fill="#59413c" />
 
-      <div className="pointer-events-none absolute bottom-[17%] right-[10%] h-9 w-9 rounded-full bg-[#FF7300] shadow-xl shadow-orange-400/30" />
+      <path
+        d="M110 117 Q109 127 100 126 M110 117 Q111 127 120 126"
+        fill="none"
+        stroke="#59413c"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
 
-      {/* Confetti */}
+      <path
+        d="M99 137 Q110 145 121 137"
+        fill="none"
+        stroke="#59413c"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
 
-      <div className="pointer-events-none absolute left-[20%] top-[9%] text-2xl text-white/40">
-        ✦
-      </div>
+function Pillow({ className = "", colour = "#fff5f8" }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={`dream-pillow absolute rounded-[45%] border-[3px] border-white/90 shadow-[0_4px_10px_rgba(105,79,100,0.10)] ${className}`}
+      style={{ backgroundColor: colour }}
+    >
+      <div className="absolute inset-2 rounded-[45%] border border-white/70" />
+    </div>
+  );
+}
 
-      <div className="pointer-events-none absolute right-[25%] top-[12%] text-3xl text-[#FFB800]/60">
-        ★
-      </div>
+export default function NotFound() {
+  return (
+    <main className="dream-page relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[#f9f0f3] px-4 py-4 text-[#315b53] sm:px-6">
+      {/* Dreamy background */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute inset-x-0 top-0 h-[72%] bg-gradient-to-b from-[#dce9f5] via-[#f2e4ef] to-[#f9f0f3]" />
 
-      <div className="pointer-events-none absolute bottom-[25%] right-[22%] text-2xl text-[#FF0073]/60">
-        ✦
-      </div>
-
-      <div className="relative z-10 mx-auto w-full max-w-4xl text-center">
-
-        {/* =====================================================
-            LABEL
-        ===================================================== */}
-
-        <div className="mb-4 flex justify-center sm:mb-5">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-xl backdrop-blur-xl sm:text-xs">
-            <span className="h-2 w-2 animate-bounce rounded-full bg-[#FFB800]" />
-            Oops! Toy missing
-          </span>
+        <div className="dream-moon absolute right-[8%] top-[5%] flex h-12 w-12 items-center justify-center rounded-full bg-[#fff0bf] text-2xl shadow-[0_0_35px_rgba(255,228,156,0.55)] sm:right-[13%] sm:top-[7%] sm:h-16 sm:w-16 sm:text-3xl">
+          ☾
         </div>
 
-        {/* =====================================================
-            404
-        ===================================================== */}
+        <div className="dream-cloud cloud-left absolute left-[-25px] top-[17%] text-5xl opacity-70 sm:left-[6%] sm:text-7xl">
+          ☁
+        </div>
 
-        <h1 className="font-heading text-[6.5rem] font-black leading-[0.78] tracking-[-0.07em] sm:text-[9rem] lg:text-[11rem]">
+        <div className="dream-cloud cloud-right absolute right-[-25px] top-[28%] text-5xl opacity-60 sm:right-[6%] sm:text-7xl">
+          ☁
+        </div>
 
-          <span>4</span>
-
-          <span className="bg-gradient-to-r from-[#FF0073] via-[#FFB800] to-[#0B9FEE] bg-clip-text text-transparent">
-            0
+        {[
+          ["12%", "24%", "✦"],
+          ["25%", "12%", "✧"],
+          ["39%", "28%", "✦"],
+          ["63%", "16%", "✧"],
+          ["82%", "22%", "✦"],
+          ["91%", "40%", "✧"],
+          ["7%", "42%", "✦"],
+        ].map(([left, top, star], index) => (
+          <span
+            key={index}
+            className="dream-star absolute text-sm text-white sm:text-lg"
+            style={{ left, top, animationDelay: `${index * 0.4}s` }}
+          >
+            {star}
           </span>
+        ))}
 
-          <span>4</span>
+        <div className="absolute -bottom-24 -left-[15%] h-40 w-[80%] rounded-[50%] bg-[#d9e8dc] sm:h-52" />
+        <div className="absolute -bottom-28 -right-[15%] h-44 w-[85%] rounded-[50%] bg-[#c9dfd0] sm:h-56" />
+      </div>
 
+      {/* Compact heading */}
+      <header className="relative z-10 mx-auto w-full max-w-3xl text-center">
+        <div className="mb-1.5 inline-flex items-center gap-1.5 rounded-full border border-white/80 bg-white/70 px-3 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-[#64867d] shadow-sm backdrop-blur sm:text-[10px]">
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#e9a8bd]" />
+          A little detour into dreamland
+        </div>
+
+        <h1 className="font-heading text-[4.5rem] font-bold leading-[0.85] tracking-[-0.08em] text-[#315b53] sm:text-[6rem] md:text-[7rem]">
+          4<span className="dream-zero inline-block text-[#d9a1bd]">0</span>4
         </h1>
 
-        {/* =====================================================
-            MESSAGE
-        ===================================================== */}
-
-        <h2 className="mx-auto mt-7 max-w-2xl font-heading text-2xl font-black leading-tight sm:mt-8 sm:text-4xl">
-
-          This page has gone off to{" "}
-
-          <span className="bg-gradient-to-r from-[#FFB800] to-[#FF7300] bg-clip-text text-transparent">
-            play!
-          </span>
-
-          {" "}🎈
-
+        <h2 className="mx-auto mt-2 font-heading text-xl font-bold leading-tight text-[#315b53] sm:text-2xl md:text-3xl">
+          This page seems to be in{" "}
+          <span className="text-[#c38cad]">dreamland.</span>
         </h2>
 
-        <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-white/75 sm:mt-4 sm:text-base">
-
-          We couldn't find the page, but we've got plenty of toys
-          ready to keep you entertained.
-
+        <p className="mx-auto mt-1.5 max-w-md text-xs leading-5 text-[#648078] sm:text-sm">
+          This page has dozed off. Fabian, Bella and Brooke are helping us find
+          the way home.
         </p>
+      </header>
 
-        {/* =====================================================
-            TOY MACHINE
-        ===================================================== */}
+      {/* Bedtime scene */}
+      <section
+        aria-label="Fabian Fox, Bella Bunny and Brooke Badger tucked into bed"
+        className="relative z-10 mx-auto mt-3 w-full max-w-xl sm:mt-4"
+      >
+        <span className="dream-heart absolute left-[7%] top-[12%] z-30 text-xl text-[#d9a1bd] sm:text-2xl">
+          ♡
+        </span>
+        <span className="dream-heart heart-two absolute right-[7%] top-[18%] z-30 text-xl text-[#d9a1bd] sm:text-2xl">
+          ♡
+        </span>
+        <span className="dream-star absolute left-[22%] top-[3%] z-30 text-sm text-[#e6bf68]">
+          ✦
+        </span>
+        <span className="dream-star absolute right-[22%] top-[4%] z-30 text-sm text-[#e6bf68]">
+          ✧
+        </span>
 
-        <div className="relative mx-auto mt-7 h-[210px] w-full max-w-[360px] sm:mt-8 sm:h-[230px]">
+        {/* Bed and headboard */}
+        <div className="relative mx-auto mt-5 w-[94%] sm:mt-6">
+          {/* Bed legs */}
+          <div className="absolute -bottom-3 left-[5%] right-[5%] h-4 rounded-b-xl bg-[#a97769] shadow-sm" />
+          <div className="absolute -bottom-7 left-[12%] h-6 w-3 rounded-b-md bg-[#a97769] sm:-bottom-8 sm:h-7" />
+          <div className="absolute -bottom-7 right-[12%] h-6 w-3 rounded-b-md bg-[#a97769] sm:-bottom-8 sm:h-7" />
 
-          {/* Glow */}
+          {/* Headboard */}
+          <div className="relative z-10 h-32 overflow-hidden rounded-t-[38px] border-[5px] border-[#fffaf4] bg-[#e6c2b5] shadow-[0_6px_14px_rgba(113,83,85,0.12)] sm:h-40 sm:rounded-t-[48px] sm:border-[7px]">
+            <div className="absolute inset-2 rounded-t-[28px] border border-white/40 sm:rounded-t-[38px]" />
+            <div className="absolute inset-x-[12%] top-[25%] h-px bg-white/50" />
+            <div className="absolute inset-x-[12%] top-[55%] h-px bg-white/40" />
 
-          <div className="pointer-events-none absolute bottom-5 left-1/2 h-10 w-64 -translate-x-1/2 rounded-full bg-black/30 blur-2xl" />
+           <Pillow
+              colour="#fff3f5"
+              className="left-[5%] top-[28%] h-[58%] w-[35%] -rotate-6"
+            />
+            <Pillow
+              colour="#f9eaf1"
+              className="left-[32%] top-[22%] h-[63%] w-[36%] rotate-2"
+            />
+            <Pillow
+              colour="#f0eaf8"
+              className="right-[5%] top-[28%] h-[58%] w-[35%] rotate-6"
+/>
 
-          {/* =====================================================
-              TOY POPPING OUT
-          ===================================================== */}
-
-          {toy && (
-            <button
-              key={toyNumber}
-              type="button"
-              onClick={playToy}
-              disabled={toyAnimation}
-              aria-label={`Play with ${toy.name}`}
-              className={`absolute left-1/2 top-[-10px] z-20 flex -translate-x-1/2 flex-col items-center border-0 bg-transparent p-0 text-left ${
-                toyAnimation
-                  ? toy.animation
-                  : "animate-[toyPop_.55s_ease-out]"
-              } ${
-                toyAnimation
-                  ? "cursor-default"
-                  : "cursor-pointer"
-              }`}
-            >
-
-              {/* Toy */}
-
-              <div
-                className={`flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br ${toy.colour} text-5xl shadow-2xl transition-transform duration-200 ${
-                  !toyAnimation ? "hover:scale-110 active:scale-95" : ""
-                }`}
-              >
-                {toy.emoji}
+            {/* Buddy heads sit in front of pillows */}
+            <div className="absolute inset-x-[5%] bottom-[-18px] flex items-end justify-center sm:bottom-[-23px]">
+              <div className="dream-head buddy-fox relative z-10 w-[30%] max-w-[145px]">
+                <BuddyHead animal="fox" className="w-full drop-shadow-sm" />
               </div>
 
-              {/* Toy name */}
-
-              <div className="mt-2 whitespace-nowrap rounded-full bg-black/20 px-3 py-1 text-[10px] font-black uppercase tracking-wider backdrop-blur">
-                {toy.name}
+              <div className="dream-head buddy-bunny relative z-20 -mx-[2%] w-[34%] max-w-[165px]">
+                <BuddyHead animal="bunny" className="w-full drop-shadow-sm" />
               </div>
 
-              {/* Click hint */}
-
-              {!toyAnimation && (
-                <div className="mt-1 text-[9px] font-black uppercase tracking-[0.15em] text-white/60">
-                  ✨ Click me!
-                </div>
-              )}
-
-            </button>
-          )}
-
-          {/* =====================================================
-              MACHINE
-          ===================================================== */}
-
-          <div
-            className={`absolute bottom-5 left-1/2 h-36 w-56 -translate-x-1/2 rounded-[2rem] border-4 border-white/20 bg-gradient-to-br from-[#FF0073] via-[#A21CAF] to-[#5B21B6] shadow-2xl transition-transform duration-300 ${
-              isPlaying ? "scale-95" : "hover:scale-[1.02]"
-            }`}
-          >
-
-            {/* Machine top */}
-
-            <div className="absolute -top-5 left-1/2 h-8 w-40 -translate-x-1/2 rounded-full border-4 border-white/20 bg-[#FFB800] shadow-lg" />
-
-            {/* Window */}
-
-            <div className="absolute left-1/2 top-8 h-20 w-32 -translate-x-1/2 overflow-hidden rounded-2xl border-4 border-white/20 bg-[#160B3D]/80 shadow-inner">
-
-              {!toy && !isPlaying && (
-                <div className="flex h-full items-center justify-center text-4xl">
-                  🧸
-                </div>
-              )}
-
-              {isPlaying && (
-                <div className="flex h-full items-center justify-center">
-
-                  <div className="text-3xl animate-[toySpin_.5s_linear_infinite]">
-                    🎲
-                  </div>
-
-                </div>
-              )}
-
-              {toy && !isPlaying && (
-                <div className="flex h-full items-center justify-center text-4xl">
-                  {toy.emoji}
-                </div>
-              )}
-
+              <div className="dream-head buddy-badger relative z-10 w-[30%] max-w-[145px]">
+                <BuddyHead animal="badger" className="w-full drop-shadow-sm" />
+              </div>
             </div>
-
-            {/* Button */}
-
-            <button
-              type="button"
-              onClick={makeToy}
-              disabled={isPlaying}
-              aria-label="Make me a toy"
-              className="absolute bottom-3 left-1/2 flex h-8 -translate-x-1/2 items-center justify-center rounded-full border-2 border-white/30 bg-[#FFB800] px-2 text-[11px] font-black uppercase tracking-wide text-purple-900 shadow-lg transition-all hover:scale-110 hover:bg-[#FFC933] active:scale-90 disabled:cursor-wait"
-            >
-              Make me a toy
-            </button>
-
           </div>
 
-          {/* Machine feet */}
+          {/* Duvet: in front of the lower part of the characters */}
+          <div className="dream-duvet relative z-20 -mt-1 h-[76px] rounded-[45%_45%_18px_18px/42%_42%_18px_18px] border-[5px] border-white bg-[#fffaf5] shadow-[0_8px_14px_rgba(116,94,104,0.12)] sm:h-[94px] sm:border-[7px]">
+            <div className="absolute inset-x-[4%] top-2 h-[65%] rounded-[45%] border-b border-[#f0dce7]" />
 
-          <div className="absolute bottom-0 left-[25%] h-5 w-7 rotate-12 rounded-b-lg bg-[#3B176F]" />
-
-          <div className="absolute bottom-0 right-[25%] h-5 w-7 -rotate-12 rounded-b-lg bg-[#3B176F]" />
-
+            {/* Subtle stitched detail, not pillow shapes */}
+            <div className="absolute inset-x-[12%] top-[35%] flex justify-around text-xs text-[#d7b2c9] sm:text-sm">
+              <span>✦</span>
+              <span>♡</span>
+              <span>✧</span>
+              <span>♡</span>
+              <span>✦</span>
+            </div>
+          </div>
         </div>
+      </section>
 
-        {/* =====================================================
-            INTERACTION
-        ===================================================== */}
+      {/* Compact navigation */}
+      <nav className="relative z-10 mt-8 flex w-full flex-col items-center justify-center gap-2 sm:mt-9 sm:flex-row">
+        <Link
+          href="/"
+          className="inline-flex min-h-10 w-full max-w-[220px] items-center justify-center gap-2 rounded-full bg-[#427c6c] px-6 py-2.5 text-xs font-bold text-white shadow-[0_3px_0_#315b53] transition-all hover:-translate-y-0.5 hover:bg-[#356d5e] active:translate-y-0.5 active:shadow-none sm:w-auto"
+        >
+          <span>🏡</span>
+          Take me home
+        </Link>
 
-        <div className="min-h-[40px]">
+        <Link
+          href="/buddies"
+          className="inline-flex min-h-10 w-full max-w-[220px] items-center justify-center gap-2 rounded-full border-2 border-white bg-white/75 px-6 py-2 text-xs font-bold text-[#52796f] shadow-sm transition-all hover:-translate-y-0.5 hover:bg-white sm:w-auto"
+        >
+          <span>💗</span>
+          Meet the buddies
+        </Link>
+      </nav>
 
-          {toy ? (
-            <p
-              key={toyNumber}
-              className="animate-[resultPop_.35s_ease-out] text-sm font-bold text-white/90"
-            >
-              🎉 You made a {toy.name.toLowerCase()}!
-            </p>
-          ) : (
-            <p className="text-xs font-bold uppercase tracking-[0.15em] text-white/50">
-              {isPlaying
-                ? "Making something fun..."
-                : "Tap the machine to make a toy!"}
-            </p>
-          )}
-
-        </div>
-
-        {/* =====================================================
-            BUTTONS
-        ===================================================== */}
-
-        <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row">
-
-          <Link
-            href="/"
-            className="
-              inline-flex
-              items-center
-              justify-center
-              rounded-full
-              border
-              border-white/20
-              bg-white/10
-              px-8
-              py-4
-              text-sm
-              font-bold
-              text-white
-              backdrop-blur-xl
-              transition-all
-              duration-300
-              hover:-translate-y-1
-              hover:bg-white/20
-            "
-          >
-            🎨 Keep playing
-          </Link>
-
-          <Link
-            href="/"
-            className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/10 px-7 py-3.5 text-sm font-bold text-white backdrop-blur-xl transition-all hover:-translate-y-1 hover:bg-white/20"
-          >
-            🏠 Let's go home
-          </Link>
-
-        </div>
-
-        {/* Footer */}
-
-        <p className="mt-7 text-xs font-medium text-white/40">
-          No toys were harmed while looking for this page. 🧸
-        </p>
-
-      </div>
+      <p className="relative z-10 mt-4 text-center text-[10px] font-medium text-[#78948a]">
+        Three little buddies. One very big duvet. ✨
+      </p>
 
       <style jsx>{`
-
-        /* =====================================================
-           TOY POP
-        ===================================================== */
-
-        @keyframes toyPop {
-          0% {
-            opacity: 0;
-            transform: translateX(0) translateY(25px) scale(0.5) rotate(-8deg);
-          }
-
-          55% {
-            opacity: 1;
-            transform: translateX(0) translateY(-12px) scale(1.08) rotate(4deg);
-          }
-
-          100% {
-            opacity: 1;
-            transform: translateX(0) translateY(0) scale(1) rotate(0deg);
-          }
+        .dream-star {
+          animation: twinkle 3s ease-in-out infinite;
         }
 
-        /* =====================================================
-           TEDDY
-        ===================================================== */
-
-        @keyframes teddyWiggle {
-          0% {
-            transform: rotate(0deg) scale(1);
-          }
-
-          20% {
-            transform: rotate(-12deg) scale(1.08);
-          }
-
-          40% {
-            transform: rotate(12deg) scale(1.08);
-          }
-
-          60% {
-            transform: rotate(-8deg) scale(1.05);
-          }
-
-          80% {
-            transform: rotate(6deg) scale(1.02);
-          }
-
-          100% {
-            transform: rotate(0deg) scale(1);
-          }
+        .dream-heart {
+          animation: heartFloat 4s ease-in-out infinite;
         }
 
-        /* =====================================================
-           CAR
-        ===================================================== */
-
-        @keyframes carDrive {
-          0% {
-            transform: translateX(0) rotate(0deg);
-          }
-
-          15% {
-            transform: translateX(-8px) rotate(-2deg);
-          }
-
-          55% {
-            transform: translateX(90px) rotate(2deg);
-          }
-
-          70% {
-            transform: translateX(90px) rotate(2deg);
-          }
-
-          100% {
-            transform: translateX(0) rotate(0deg);
-          }
+        .heart-two {
+          animation-delay: -2s;
         }
 
-        /* =====================================================
-           DINOSAUR
-        ===================================================== */
+        .dream-cloud {
+          animation: cloudFloat 12s ease-in-out infinite alternate;
+        }
 
-        @keyframes dinosaurRoar {
-          0% {
-            transform: translateY(0) rotate(0deg) scale(1);
+        .cloud-right {
+          animation-delay: -5s;
+          animation-duration: 15s;
+        }
+
+        .dream-moon {
+          animation: moonGlow 5s ease-in-out infinite;
+        }
+
+        .dream-zero {
+          animation: zeroWobble 4s ease-in-out infinite;
+        }
+
+        .dream-head {
+          transform-origin: center bottom;
+          animation: sleepyPeek 4s ease-in-out infinite;
+        }
+
+        .buddy-fox {
+          animation-delay: -1s;
+        }
+
+        .buddy-bunny {
+          animation-delay: -2.2s;
+        }
+
+        .buddy-badger {
+          animation-delay: -0.4s;
+        }
+
+        .dream-duvet {
+          animation: duvetBreath 4.5s ease-in-out infinite;
+          transform-origin: center top;
+        }
+
+        .dream-pillow {
+          transform-origin: center;
+        }
+
+        @keyframes twinkle {
+          0%, 100% {
+            opacity: 0.45;
+            transform: scale(0.85) rotate(-8deg);
           }
-
-          20% {
-            transform: translateY(-4px) rotate(-8deg) scale(1.08);
-          }
-
-          35% {
-            transform: translateY(2px) rotate(8deg) scale(1.1);
-          }
-
           50% {
-            transform: translateY(-3px) rotate(-7deg) scale(1.08);
-          }
-
-          65% {
-            transform: translateY(2px) rotate(6deg) scale(1.05);
-          }
-
-          100% {
-            transform: translateY(0) rotate(0deg) scale(1);
-          }
-        }
-
-        /* =====================================================
-           ROCKET
-        ===================================================== */
-
-        @keyframes rocketLaunch {
-          0% {
-            transform: translateY(0) rotate(0deg) scale(1);
-          }
-
-          15% {
-            transform: translateY(4px) rotate(-3deg) scale(1.05);
-          }
-
-          25% {
-            transform: translateY(0) rotate(3deg) scale(1.08);
-          }
-
-          45% {
-            transform: translateY(-70px) rotate(-2deg) scale(1.05);
-          }
-
-          65% {
-            transform: translateY(-115px) rotate(2deg) scale(0.95);
-          }
-
-          82% {
-            transform: translateY(-35px) rotate(-1deg) scale(1.02);
-          }
-
-          100% {
-            transform: translateY(0) rotate(0deg) scale(1);
-          }
-        }
-
-        /* =====================================================
-           UNICORN
-        ===================================================== */
-
-        @keyframes unicornMagic {
-          0% {
-            transform: translateY(0) rotate(0deg) scale(1);
-          }
-
-          20% {
-            transform: translateY(-12px) rotate(-8deg) scale(1.08);
-          }
-
-          40% {
-            transform: translateY(2px) rotate(8deg) scale(1.12);
-          }
-
-          60% {
-            transform: translateY(-10px) rotate(-5deg) scale(1.08);
-          }
-
-          80% {
-            transform: translateY(1px) rotate(4deg) scale(1.04);
-          }
-
-          100% {
-            transform: translateY(0) rotate(0deg) scale(1);
-          }
-        }
-
-        /* =====================================================
-           ROBOT
-        ===================================================== */
-
-        @keyframes robotDance {
-          0% {
-            transform: rotate(0deg) translateY(0) scale(1);
-          }
-
-          15% {
-            transform: rotate(-12deg) translateY(-4px) scale(1.05);
-          }
-
-          30% {
-            transform: rotate(12deg) translateY(-8px) scale(1.08);
-          }
-
-          45% {
-            transform: rotate(-12deg) translateY(-4px) scale(1.05);
-          }
-
-          60% {
-            transform: rotate(12deg) translateY(-8px) scale(1.08);
-          }
-
-          75% {
-            transform: rotate(-6deg) translateY(-2px) scale(1.03);
-          }
-
-          100% {
-            transform: rotate(0deg) translateY(0) scale(1);
-          }
-        }
-
-        /* =====================================================
-           BALLOON
-        ===================================================== */
-
-        @keyframes balloonFloat {
-          0% {
-            transform: translateY(0) rotate(0deg) scale(1);
-          }
-
-          20% {
-            transform: translateY(-20px) rotate(-6deg) scale(1.05);
-          }
-
-          40% {
-            transform: translateY(-45px) rotate(6deg) scale(1.08);
-          }
-
-          60% {
-            transform: translateY(-25px) rotate(-5deg) scale(1.05);
-          }
-
-          80% {
-            transform: translateY(-8px) rotate(3deg) scale(1.02);
-          }
-
-          100% {
-            transform: translateY(0) rotate(0deg) scale(1);
-          }
-        }
-
-        /* =====================================================
-           UTILITY CLASSES
-        ===================================================== */
-
-        .toy-teddy {
-          animation: teddyWiggle 1.1s ease-in-out;
-        }
-
-        .toy-car {
-          animation: carDrive 1.1s ease-in-out;
-        }
-
-        .toy-dinosaur {
-          animation: dinosaurRoar 1.1s ease-in-out;
-        }
-
-        .toy-rocket {
-          animation: rocketLaunch 1.1s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-
-        .toy-unicorn {
-          animation: unicornMagic 1.1s ease-in-out;
-        }
-
-        .toy-robot {
-          animation: robotDance 1.1s ease-in-out;
-        }
-
-        .toy-balloon {
-          animation: balloonFloat 1.1s ease-in-out;
-        }
-
-        /* =====================================================
-           MACHINE
-        ===================================================== */
-
-        @keyframes toySpin {
-          from {
-            transform: rotate(0deg);
-          }
-
-          to {
-            transform: rotate(360deg);
-          }
-        }
-
-        /* =====================================================
-           RESULT
-        ===================================================== */
-
-        @keyframes resultPop {
-          0% {
-            opacity: 0;
-            transform: translateY(6px) scale(0.9);
-          }
-
-          100% {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: scale(1.15) rotate(10deg);
           }
         }
 
-      `}</style>
+        @keyframes heartFloat {
+          0%, 100% {
+            transform: translateY(0) rotate(-8deg);
+          }
+          50% {
+            transform: translateY(-6px) rotate(8deg);
+          }
+        }
 
+        @keyframes cloudFloat {
+          from {
+            transform: translate3d(-5px, 0, 0);
+          }
+          to {
+            transform: translate3d(8px, 4px, 0);
+          }
+        }
+
+        @keyframes moonGlow {
+          0%, 100% {
+            box-shadow: 0 0 25px rgba(255, 228, 156, 0.35);
+          }
+          50% {
+            box-shadow: 0 0 45px rgba(255, 228, 156, 0.7);
+          }
+        }
+
+        @keyframes zeroWobble {
+          0%, 100% {
+            transform: translateY(0) rotate(-3deg);
+          }
+          50% {
+            transform: translateY(-4px) rotate(3deg);
+          }
+        }
+
+        @keyframes sleepyPeek {
+          0%, 100% {
+            translate: 0 2px;
+            rotate: -0.5deg;
+          }
+          50% {
+            translate: 0 -3px;
+            rotate: 0.5deg;
+          }
+        }
+
+        @keyframes duvetBreath {
+          0%, 100% {
+            scale: 1 1;
+          }
+          50% {
+            scale: 1 1.015;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .dream-star,
+          .dream-heart,
+          .dream-cloud,
+          .dream-moon,
+          .dream-zero,
+          .dream-head,
+          .dream-duvet {
+            animation: none !important;
+          }
+        }
+      `}</style>
     </main>
   );
 }
