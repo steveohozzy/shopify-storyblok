@@ -17,7 +17,7 @@ const games = [
     subtitle: "A magical platform adventure",
     description:
       "Jump between floating islands, dodge dream sparks and collect shiny treasures with your favourite buddy.",
-    href: "/dream-journey",
+    href: "/games/dream-journey",
     action: "Explore the dream worlds",
     emoji: "☁️",
     decoration: "🌈",
