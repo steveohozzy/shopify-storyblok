@@ -413,11 +413,6 @@ export default function BuddyQuiz({ buddies = [] }) {
             </div>
           )}
         </section>
-
-        <footer className="mt-7 text-center text-xs leading-6 text-[#a194a8]">
-          <p>🦊 🐰 🦡 🐶 🦦</p>
-          <p className="mt-1">There are no wrong answers. Every buddy has their own magic. ✨</p>
-        </footer>
       </div>
     </main>
   );

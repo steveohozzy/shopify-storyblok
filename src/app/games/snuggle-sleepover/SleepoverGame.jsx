@@ -787,10 +787,6 @@ export default function SleepoverGame() {
             </div>
           </section>
         )}
-
-        <footer className="mt-10 text-center text-xs text-[#004c46]/50">
-          Made for little imaginations and very big cuddles.
-        </footer>
       </div>
     </main>
   );

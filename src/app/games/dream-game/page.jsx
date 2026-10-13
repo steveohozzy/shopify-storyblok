@@ -697,8 +697,6 @@ export default function DreamJourneyPage() {
             </div>
           </div>
         </section>}
-
-        <footer className="mt-7 text-center text-xs text-[#26345b]/50">Made of stardust, soft clouds and big imaginations ✦</footer>
       </div>
     </main>
   );
