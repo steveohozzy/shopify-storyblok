@@ -438,6 +438,9 @@ export default function DreamJourneyPage() {
         p.x = Math.max(0, Math.min(level.width - 60, p.x + p.vx));
         p.vy = Math.min(10, p.vy + 0.42);
 
+        
+        
+        const previousY = p.y;
         p.y += p.vy;
         p.grounded = false;
 
@@ -445,7 +448,7 @@ export default function DreamJourneyPage() {
           const [x, y, width] = platform;
           const playerLeft = p.x + 12;
           const playerRight = p.x + 52;
-          const previousBottom = p.y + 68 - p.vy;
+          const previousBottom = previousY + 68;
           const currentBottom = p.y + 68;
 
           if (
