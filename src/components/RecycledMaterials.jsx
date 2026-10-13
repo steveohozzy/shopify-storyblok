@@ -32,15 +32,6 @@ export default function RecycledMaterials({ blok }) {
               className="h-auto w-full object-contain"
             />
           </div>
-
-          <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-[#d5e3d5] bg-white px-3 py-3 shadow-lg sm:bottom-6">
-            <Recycle
-              size={21}
-              strokeWidth={1.8}
-              className="text-[#00594f]"
-              aria-hidden="true"
-            />
-          </div>
         </div>
 
         <div className="mx-auto max-w-2xl text-left">
