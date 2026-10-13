@@ -260,26 +260,26 @@ export default function NotFound() {
           <div className="absolute -bottom-7 right-[12%] h-6 w-3 rounded-b-md bg-[#a97769] sm:-bottom-8 sm:h-7" />
 
           {/* Headboard */}
-          <div className="relative z-10 h-32 overflow-hidden rounded-t-[38px] border-[5px] border-[#fffaf4] bg-[#e6c2b5] shadow-[0_6px_14px_rgba(113,83,85,0.12)] sm:h-40 sm:rounded-t-[48px] sm:border-[7px]">
+          <div className="relative z-10 h-32 rounded-t-[38px] border-[5px] border-[#fffaf4] bg-[#e6c2b5] shadow-[0_6px_14px_rgba(113,83,85,0.12)] sm:h-40 sm:rounded-t-[48px] sm:border-[7px]">
             <div className="absolute inset-2 rounded-t-[28px] border border-white/40 sm:rounded-t-[38px]" />
             <div className="absolute inset-x-[12%] top-[25%] h-px bg-white/50" />
             <div className="absolute inset-x-[12%] top-[55%] h-px bg-white/40" />
 
-           <Pillow
+            <Pillow
               colour="#fff3f5"
-              className="left-[5%] top-[28%] h-[58%] w-[35%] -rotate-6"
+              className="left-[5%] top-[38%] h-[52%] w-[35%] -rotate-6"
             />
             <Pillow
               colour="#f9eaf1"
-              className="left-[32%] top-[22%] h-[63%] w-[36%] rotate-2"
+              className="left-[32%] top-[34%] h-[56%] w-[36%] rotate-2"
             />
             <Pillow
               colour="#f0eaf8"
-              className="right-[5%] top-[28%] h-[58%] w-[35%] rotate-6"
-/>
+              className="right-[5%] top-[38%] h-[52%] w-[35%] rotate-6"
+            />
 
-            {/* Buddy heads sit in front of pillows */}
-            <div className="absolute inset-x-[5%] bottom-[-18px] flex items-end justify-center sm:bottom-[-23px]">
+            {/* Heads sit naturally against the pillows */}
+            <div className="absolute inset-x-[5%] bottom-[-10px] flex items-end justify-center sm:bottom-[-14px]">
               <div className="dream-head buddy-fox relative z-10 w-[30%] max-w-[145px]">
                 <BuddyHead animal="fox" className="w-full drop-shadow-sm" />
               </div>
@@ -295,7 +295,7 @@ export default function NotFound() {
           </div>
 
           {/* Duvet: in front of the lower part of the characters */}
-          <div className="dream-duvet relative z-20 -mt-1 h-[76px] rounded-[45%_45%_18px_18px/42%_42%_18px_18px] border-[5px] border-white bg-[#fffaf5] shadow-[0_8px_14px_rgba(116,94,104,0.12)] sm:h-[94px] sm:border-[7px]">
+          <div className="dream-duvet relative z-20 -mt-8 h-[76px] rounded-[45%_45%_18px_18px/42%_42%_18px_18px] border-[5px] border-white bg-[#fffaf5] shadow-[0_8px_14px_rgba(116,94,104,0.12)] sm:h-[94px] sm:border-[7px]">
             <div className="absolute inset-x-[4%] top-2 h-[65%] rounded-[45%] border-b border-[#f0dce7]" />
 
             {/* Subtle stitched detail, not pillow shapes */}
@@ -328,10 +328,6 @@ export default function NotFound() {
           Meet the buddies
         </Link>
       </nav>
-
-      <p className="relative z-10 mt-4 text-center text-[10px] font-medium text-[#78948a]">
-        Three little buddies. One very big duvet. ✨
-      </p>
 
       <style jsx>{`
         .dream-star {
