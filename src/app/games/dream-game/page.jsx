@@ -543,7 +543,7 @@ export default function DreamJourneyPage() {
     0,
     Math.min(
       Math.max(0, level.width - viewportWidth),
-      player.x - viewportWidth * 0.3
+      player.x - viewportWidth * 0.22
     )
   );
 
@@ -594,7 +594,7 @@ export default function DreamJourneyPage() {
 
           <div
             ref={gameViewportRef}
-            className="relative h-[400px] select-none overflow-hidden touch-pan-y sm:h-[440px]"
+            className="relative h-[400px] select-none overflow-hidden touch-none sm:h-[440px]"
             style={{
               background: `linear-gradient(180deg, ${bg} 0%, ${level.horizon} 100%)`,
               WebkitUserSelect: "none",
@@ -620,7 +620,16 @@ export default function DreamJourneyPage() {
 
           <div className="flex flex-wrap items-center justify-between gap-3 bg-[#fffaf7] px-4 py-3 sm:px-6">
             <p className="text-xs text-[#26345b]/70">Move with <b>← →</b> or <b>A / D</b>. Jump with <b>Space</b> or <b>Z</b>. Pink dream sparks reset you if touched. Collect the blue gems for bonus treasure. Falling restarts this level.</p>
-            <div className="flex gap-2 select-none" style={{ touchAction: "none", WebkitUserSelect: "none", WebkitTouchCallout: "none" }}>
+            <div
+              className="flex gap-2 select-none touch-none"
+              style={{
+                touchAction: "none",
+                userSelect: "none",
+                WebkitUserSelect: "none",
+                WebkitTouchCallout: "none"
+              }}
+              onContextMenu={(event) => event.preventDefault()}
+            >
               <button
                 type="button"
                 onPointerDown={(event) => {
@@ -641,7 +650,7 @@ export default function DreamJourneyPage() {
                   touchRef.current.left = false;
                 }}
                 aria-label="Move left"
-                className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white shadow ring-1 ring-[#45458e]/15 active:bg-[#eae7fb] sm:h-12 sm:w-12"
+                className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white shadow ring-1 ring-[#45458e]/15 active:bg-[#eae7fb] sm:h-12 sm:w-12 select-none touch-none"
               >
                 <ArrowLeft size={24}/>
               </button>
@@ -666,7 +675,7 @@ export default function DreamJourneyPage() {
                   touchRef.current.right = false;
                 }}
                 aria-label="Move right"
-                className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white shadow ring-1 ring-[#45458e]/15 active:bg-[#eae7fb] sm:h-12 sm:w-12"
+                className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white shadow ring-1 ring-[#45458e]/15 active:bg-[#eae7fb] sm:h-12 sm:w-12 select-none touch-none"
               >
                 <ArrowRight size={24}/>
               </button>
@@ -678,7 +687,7 @@ export default function DreamJourneyPage() {
                   jumpRef.current = true;
                 }}
                 aria-label="Jump"
-                className="h-14 min-w-24 rounded-2xl bg-[#45458e] px-5 text-sm font-bold text-white shadow active:bg-[#33336e] sm:h-12"
+                className="h-14 min-w-24 rounded-2xl bg-[#45458e] px-5 text-sm font-bold text-white shadow active:bg-[#33336e] sm:h-12 select-none touch-none"
               >
                 JUMP ↑
               </button>
