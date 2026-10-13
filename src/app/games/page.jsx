@@ -211,22 +211,6 @@ export default function GamesPage() {
             </div>
           </div>
         </section>
-
-        <footer className="mt-14 border-t border-[#eee5ee] pt-7 text-center">
-          <div className="mb-3 flex justify-center gap-3 text-xl">
-            <span>🦊</span>
-            <span>🐰</span>
-            <span>🦡</span>
-            <span>🐶</span>
-            <span>🦦</span>
-          </div>
-          <p className="font-heading text-lg font-bold">
-            Every buddy has a little magic.
-          </p>
-          <p className="mt-2 text-xs text-[#a194a8]">
-            Made with love, stardust and lots of cuddles.
-          </p>
-        </footer>
       </div>
     </main>
   );
