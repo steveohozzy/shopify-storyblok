@@ -114,7 +114,7 @@ export default function BuddyGridPage({ items = [] }) {
                     {buddy.name}
                   </h3>
 
-                  <p className="text-sm leading-relaxed text-[#004c46]/70">
+                  <p className="text-sm leading-relaxed text-[#004c46]/70 line-clamp-2">
                     {buddy.line}
                   </p>
                 </div>

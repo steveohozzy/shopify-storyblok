@@ -111,7 +111,7 @@ export default function BuddyGrid({ items = [] }) {
                   <h3 className="mb-1 font-heading text-xl font-bold leading-tight text-[#004c46] sm:text-2xl">
                     {buddy.name}
                   </h3>
-                  <p className="text-sm leading-relaxed text-[#004c46]/70">
+                  <p className="text-sm leading-relaxed text-[#004c46]/70 line-clamp-2">
                     {buddy.line}
                   </p>
                 </div>
