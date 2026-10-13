@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -13,33 +14,33 @@ const BUDDIES = [
 
 const LEVELS = [
   { name: "Cloudy Heights", subtitle: "A gentle first dream", sky: "#9ecbff", horizon: "#fbe0f0", platform: "#fff8ff", edge: "#e8bce8", accent: "#ffdb75", width: 2200, platforms: [
-  [0, 365, 320],
-  [350, 320, 165],
-  [545, 280, 165],
-  [740, 320, 165],
-  [935, 270, 175],
-  [1140, 315, 170],
-  [1340, 265, 175],
-  [1545, 315, 175],
-  [1750, 275, 180],
-  [1960, 340, 300]
-], hazards: [] },
+    [0, 365, 320],
+    [350, 320, 165],
+    [545, 280, 165],
+    [740, 320, 165],
+    [935, 270, 175],
+    [1140, 315, 170],
+    [1340, 265, 175],
+    [1545, 315, 175],
+    [1750, 275, 180],
+    [1960, 340, 300]
+  ], hazards: [] },
   { name: "Moonlight Forest", subtitle: "Follow the glowing mushrooms", sky: "#172b61", horizon: "#40518c", platform: "#8de0c0", edge: "#39a990", accent: "#ffe89b", width: 2350, platforms: [[0,365,260],[330,320,140],[535,265,135],[740,315,145],[955,245,135],[1155,290,145],[1370,225,140],[1580,300,150],[1800,245,140],[2015,340,300]], stars: [[190,315],[365,270],[575,215],[780,265],[995,195],[1190,240],[1410,175],[1620,250],[1840,195],[2050,290]], hazards: [[630,390,50,35],[1260,390,55,35],[1700,390,55,35]] },
   { name: "Candy Clouds", subtitle: "A sweet and bouncy dream", sky: "#ffcae0", horizon: "#ffebf4", platform: "#fff6fb", edge: "#ff9fc7", accent: "#ffca54", width: 2450, platforms: [[0,365,250],[320,300,130],[510,245,130],[710,300,125],[900,220,135],[1105,275,130],[1305,210,125],[1500,275,135],[1705,220,135],[1915,295,130],[2110,350,280]], stars: [
-  [230, 315],
-  [405, 270],
-  [600, 230],
-  [795, 270],
-  [1000, 220],
-  [1205, 265],
-  [1405, 215],
-  [1610, 265],
-  [1820, 225],
-  [2040, 290]
-], },
+    [230, 315],
+    [405, 270],
+    [600, 230],
+    [795, 270],
+    [1000, 220],
+    [1205, 265],
+    [1405, 215],
+    [1610, 265],
+    [1820, 225],
+    [2040, 290]
+  ] },
   { name: "Floating Islands", subtitle: "Mind the gaps between islands", sky: "#8dd8ff", horizon: "#e4f7ff", platform: "#a6e7a5", edge: "#56b77e", accent: "#fff0a8", width: 2550, platforms: [[0,365,240],[305,300,115],[485,235,115],[665,290,115],[845,215,115],[1025,275,115],[1205,195,115],[1385,260,115],[1565,185,115],[1745,260,115],[1930,210,115],[2110,295,120],[2310,350,240]], stars: [[150,315],[330,255],[510,190],[690,245],[870,170],[1050,230],[1230,150],[1410,215],[1590,140],[1770,215],[1955,165],[2150,250],[2360,305]], hazards: [[550,390,40,35],[1090,390,45,35],[1630,390,45,35],[2020,390,45,35]] },
   { name: "The Dream Castle", subtitle: "One last leap to the dream portal!", sky: "#302b75", horizon: "#a58bdc", platform: "#e9d7ff", edge: "#b69bea", accent: "#fff0a1", width: 2700, platforms: [[0,365,230],[290,315,115],[465,260,110],[640,305,110],[815,235,110],[990,280,110],[1165,210,110],[1340,270,110],[1515,200,110],[1690,255,110],[1865,190,110],[2040,250,110],[2220,300,120],[2430,350,240]], stars: [[135,315],[310,270],[485,215],[660,260],[835,190],[1010,235],[1185,165],[1360,225],[1535,155],[1710,210],[1885,145],[2060,205],[2245,255],[2470,305]], hazards: [[530,390,40,35],[1050,390,45,35],[1570,390,45,35],[2100,390,45,35]] },
- ];
+];
 
 // Add extra platform sections so every dream has a longer second half.
 LEVELS.forEach((level, levelIndex) => {
@@ -47,23 +48,30 @@ LEVELS.forEach((level, levelIndex) => {
   const extraPlatforms = [];
   const extraStars = [];
   const extraHazards = [];
+
   for (let i = 0; i < 6 + levelIndex; i += 1) {
     const x = originalWidth + 105 + i * 205;
     const y = [305, 250, 320, 225, 285, 240, 300, 215, 275, 235, 310][(i + levelIndex) % 11];
     const width = levelIndex < 2 ? 135 : 112;
+
     extraPlatforms.push([x, y, width]);
     extraStars.push([x + width / 2, y - 48]);
+
     if (i % 2 === 1 || levelIndex > 2 && i % 2 === 0) {
       extraHazards.push([x + width * 0.55, y - 25, 30, 24]);
     }
   }
+
   const finishX = originalWidth + (6 + levelIndex) * 205 + 145;
+
   if (levelIndex >= 2) {
     extraPlatforms.push([finishX - 120, 300, 120]);
     extraStars.push([finishX - 60, 255]);
   }
+
   extraPlatforms.push([finishX, 350, 250]);
-  extraStars.push([finishX + 70, 300], [finishX + 175, 300]); 
+  extraStars.push([finishX + 70, 300], [finishX + 175, 300]);
+
   level.platforms = (level.platforms || []).concat(extraPlatforms);
   level.stars = (level.stars || []).concat(extraStars);
   level.hazards = (level.hazards || []).concat(extraHazards);
@@ -78,6 +86,7 @@ LEVELS.forEach((level, levelIndex) => {
 function CartoonBuddy({ animal, className = "" }) {
   const buddy = BUDDIES.find((item) => item.animal === animal) || BUDDIES[0];
   const { colour, belly, ears, muzzle } = buddy;
+
   return (
     <svg viewBox="0 0 220 240" role="img" aria-label={`Cute cartoon ${animal}`} className={className} xmlns="http://www.w3.org/2000/svg">
       <ellipse cx="110" cy="222" rx="62" ry="9" fill="#004c46" opacity=".10" />
@@ -100,7 +109,204 @@ function CartoonBuddy({ animal, className = "" }) {
   );
 }
 
-function makePlayer() { return { x: 65, y: 260, vx: 0, vy: 0, grounded: false, facing: 1 }; }
+function makePlayer() {
+  return { x: 65, y: 260, vx: 0, vy: 0, grounded: false, facing: 1 };
+}
+
+
+function playGameSound(type) {
+  if (typeof window === "undefined") return;
+
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) return;
+
+  if (!window.dreamJourneyAudio) {
+    window.dreamJourneyAudio = new AudioContextClass();
+  }
+
+  const context = window.dreamJourneyAudio;
+
+  const sounds = {
+    jump: [420, 620, 0.12],
+    star: [660, 880, 0.18],
+    gem: [520, 1040, 0.24],
+    complete: [523, 784, 0.35]
+  };
+
+  const sound = sounds[type];
+  if (!sound) return;
+
+  function playTone() {
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+    const now = context.currentTime;
+
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(sound[0], now);
+    oscillator.frequency.exponentialRampToValueAtTime(
+      sound[1],
+      now + sound[2]
+    );
+
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.linearRampToValueAtTime(0.18, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(
+      0.0001,
+      now + sound[2]
+    );
+
+    oscillator.connect(gain);
+    gain.connect(context.destination);
+
+    oscillator.start(now);
+    oscillator.stop(now + sound[2]);
+  }
+
+  if (context.state === "suspended") {
+    context.resume().then(playTone).catch(() => {});
+  } else {
+    playTone();
+  }
+}
+
+function startDreamMusic() {
+  if (typeof window === "undefined") return;
+
+  const AudioContextClass =
+    window.AudioContext || window.webkitAudioContext;
+
+  if (!AudioContextClass) return;
+
+  if (!window.dreamJourneyAudio) {
+    window.dreamJourneyAudio = new AudioContextClass();
+  }
+
+  const context = window.dreamJourneyAudio;
+
+  if (window.dreamJourneyMusic) return;
+
+  const master = context.createGain();
+  master.gain.value = 0.0001;
+  master.connect(context.destination);
+
+  const now = context.currentTime;
+
+  const padNotes = [];
+
+  const pads = padNotes.map((frequency) => {
+    const oscillator = context.createOscillator();
+    const volume = context.createGain();
+
+    oscillator.type = "sine";
+    oscillator.frequency.value = frequency;
+    volume.gain.value = 0.12;
+
+    oscillator.connect(volume);
+    volume.connect(master);
+    oscillator.start();
+
+    return oscillator;
+  });
+
+  const melody = [
+    523.25, 659.25, 783.99, 659.25,
+    587.33, 523.25, 440.00, 523.25,
+    659.25, 783.99, 880.00, 783.99,
+    659.25, 587.33, 523.25, 440.00
+  ];
+
+  let noteIndex = 0;
+
+  function playNextNote() {
+    if (context.state !== "running") return;
+
+    const frequency = melody[noteIndex];
+
+    const oscillator = context.createOscillator();
+    const volume = context.createGain();
+
+    const start = context.currentTime;
+    const duration = 0.65;
+
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(frequency, start);
+
+    volume.gain.setValueAtTime(0.0001, start);
+    volume.gain.linearRampToValueAtTime(0.11, start + 0.04);
+    volume.gain.exponentialRampToValueAtTime(
+      0.0001,
+      start + duration
+    );
+
+    oscillator.connect(volume);
+    volume.connect(master);
+
+    oscillator.start(start);
+    oscillator.stop(start + duration);
+
+    noteIndex = (noteIndex + 1) % melody.length;
+  }
+
+  window.dreamJourneyMusic = {
+    master: master,
+    pads: pads,
+    interval: null
+  };
+
+  function beginMusic() {
+    if (!window.dreamJourneyMusic) return;
+
+    master.gain.cancelScheduledValues(context.currentTime);
+    master.gain.setValueAtTime(
+      Math.max(master.gain.value, 0.0001),
+      context.currentTime
+    );
+    master.gain.linearRampToValueAtTime(
+      0.45,
+      context.currentTime + 1.5
+    );
+
+    playNextNote();
+
+    window.dreamJourneyMusic.interval = window.setInterval(
+      playNextNote,
+      650
+    );
+  }
+
+  if (context.state === "suspended") {
+    context.resume().then(beginMusic).catch(() => {});
+  } else {
+    beginMusic();
+  }
+}
+
+function stopDreamMusic() {
+  if (typeof window === "undefined") return;
+
+  const music = window.dreamJourneyMusic;
+  if (!music) return;
+
+  window.clearInterval(music.interval);
+
+  const context = window.dreamJourneyAudio;
+
+  music.master.gain.cancelScheduledValues(context.currentTime);
+  music.master.gain.setTargetAtTime(
+    0.0001,
+    context.currentTime,
+    0.25
+  );
+
+  music.pads.forEach((oscillator) => {
+    try {
+      oscillator.stop(context.currentTime + 1);
+    } catch (error) {}
+  });
+
+  window.dreamJourneyMusic = null;
+}
+
 
 export default function DreamJourneyPage() {
   const [buddy, setBuddy] = useState(BUDDIES[1]);
@@ -111,20 +317,27 @@ export default function DreamJourneyPage() {
   const [player, setPlayer] = useState(makePlayer);
   const [collected, setCollected] = useState([]);
   const [collectedGems, setCollectedGems] = useState([]);
-  const [soundOn, setSoundOn] = useState(false);
+  const [soundOn, setSoundOn] = useState(true);
   const [attempt, setAttempt] = useState(1);
+  const [viewportWidth, setViewportWidth] = useState(1000);
+
   const keys = useRef({});
   const playerRef = useRef(makePlayer());
   const collectedRef = useRef([]);
   const collectedGemsRef = useRef([]);
   const jumpRef = useRef(false);
   const touchRef = useRef({ left: false, right: false });
+  const gameViewportRef = useRef(null);
   const level = LEVELS[levelIndex];
 
   const restartLevel = useCallback(() => {
     playerRef.current = makePlayer();
     collectedRef.current = [];
     collectedGemsRef.current = [];
+    touchRef.current.left = false;
+    touchRef.current.right = false;
+    jumpRef.current = false;
+    keys.current = {};
     setPlayer({ ...playerRef.current });
     setCollected([]);
     setCollectedGems([]);
@@ -137,6 +350,10 @@ export default function DreamJourneyPage() {
     playerRef.current = makePlayer();
     collectedRef.current = [];
     collectedGemsRef.current = [];
+    touchRef.current.left = false;
+    touchRef.current.right = false;
+    jumpRef.current = false;
+    keys.current = {};
     setPlayer({ ...playerRef.current });
     setCollected([]);
     setCollectedGems([]);
@@ -150,35 +367,80 @@ export default function DreamJourneyPage() {
       keys.current[event.key.toLowerCase()] = true;
       if ([" ", "arrowup", "w", "z"].includes(event.key.toLowerCase())) jumpRef.current = true;
     }
-    function up(event) { keys.current[event.key.toLowerCase()] = false; }
+
+    function up(event) {
+      keys.current[event.key.toLowerCase()] = false;
+    }
+
     window.addEventListener("keydown", down);
     window.addEventListener("keyup", up);
-    return () => { window.removeEventListener("keydown", down); window.removeEventListener("keyup", up); };
+
+    return () => {
+      window.removeEventListener("keydown", down);
+      window.removeEventListener("keyup", up);
+    };
   }, []);
 
   useEffect(() => {
+    if (mode !== "playing" && mode !== "levelComplete" && mode !== "complete") {
+      return undefined;
+    }
+
+    const viewport = gameViewportRef.current;
+    if (!viewport) return undefined;
+
+    function updateViewportWidth() {
+      setViewportWidth(viewport.clientWidth || 1000);
+    }
+
+    updateViewportWidth();
+    window.addEventListener("resize", updateViewportWidth);
+
+    return () => {
+      window.removeEventListener("resize", updateViewportWidth);
+    };
+  }, [mode, levelIndex]);
+
+  useEffect(() => {
+    if (mode === "playing") return;
+
+    touchRef.current.left = false;
+    touchRef.current.right = false;
+    jumpRef.current = false;
+    keys.current = {};
+  }, [mode]);
+
+  useEffect(() => {
     if (mode !== "playing") return undefined;
+
     let frame;
     let last = 0;
+
     function tick(time) {
       if (time - last > 16) {
         last = time;
         const p = playerRef.current;
         const left = keys.current.arrowleft || keys.current.a || touchRef.current.left;
         const right = keys.current.arrowright || keys.current.d || touchRef.current.right;
+
         p.vx = left === right ? 0 : left ? -4 : 4;
+
         if (left) p.facing = -1;
         if (right) p.facing = 1;
+
         if (jumpRef.current && p.grounded) {
+          if (soundOn) playGameSound("jump");
           p.vy = -12.5;
           p.grounded = false;
         }
+
         jumpRef.current = false;
         p.x = Math.max(0, Math.min(level.width - 60, p.x + p.vx));
         p.vy = Math.min(10, p.vy + 0.42);
-        const previousBottom = p.y + 68;
+
         p.y += p.vy;
         p.grounded = false;
+
         level.platforms.forEach((platform) => {
           const [x, y, width] = platform;
           const playerLeft = p.x + 12;
@@ -198,10 +460,12 @@ export default function DreamJourneyPage() {
             p.grounded = true;
           }
         });
+
         const hitHazard = level.hazards.some((hazard) =>
           p.x + 48 > hazard[0] && p.x + 14 < hazard[0] + hazard[2] &&
           p.y + 62 > hazard[1] && p.y + 12 < hazard[1] + hazard[3]
         );
+
         if (p.y > 480 || hitHazard) {
           playerRef.current = makePlayer();
           collectedRef.current = [];
@@ -213,38 +477,76 @@ export default function DreamJourneyPage() {
           frame = window.requestAnimationFrame(tick);
           return;
         }
+
         const starHits = [];
+
         level.stars.forEach((star, index) => {
-          if (!collectedRef.current.includes(index) && Math.abs((p.x + 30) - star[0]) < 33 && Math.abs((p.y + 32) - star[1]) < 42) starHits.push(index);
+          if (!collectedRef.current.includes(index) && Math.abs((p.x + 30) - star[0]) < 33 && Math.abs((p.y + 32) - star[1]) < 42) {
+            starHits.push(index);
+          }
         });
+
         if (starHits.length) {
+          if (soundOn) playGameSound("star");
           collectedRef.current = collectedRef.current.concat(starHits);
           setCollected(collectedRef.current.slice());
         }
+
         const gemHits = [];
+
         level.gems.forEach((gem, index) => {
-          if (!collectedGemsRef.current.includes(index) && Math.abs((p.x + 30) - gem[0]) < 34 && Math.abs((p.y + 32) - gem[1]) < 38) gemHits.push(index);
+          if (!collectedGemsRef.current.includes(index) && Math.abs((p.x + 30) - gem[0]) < 34 && Math.abs((p.y + 32) - gem[1]) < 38) {
+            gemHits.push(index);
+          }
         });
+
         if (gemHits.length) {
+          if (soundOn) playGameSound("gem");
           collectedGemsRef.current = collectedGemsRef.current.concat(gemHits);
           setCollectedGems(collectedGemsRef.current.slice());
         }
+
         if (p.x > level.width - 135 && p.y + 68 >= 280) {
-          if (levelIndex === LEVELS.length - 1) setMode("complete");
-          else {
+          if (soundOn) playGameSound("complete");
+          if (levelIndex === LEVELS.length - 1) {
+            setMode("complete");
+          } else {
             setUnlocked((n) => Math.max(n, levelIndex + 2));
             setMode("levelComplete");
           }
         }
+
         setPlayer({ ...p });
       }
+
       frame = window.requestAnimationFrame(tick);
     }
-    frame = window.requestAnimationFrame(tick);
-    return () => window.cancelAnimationFrame(frame);
-  }, [mode, level, levelIndex]);
 
-  const camera = Math.max(0, Math.min(level.width - 1000, player.x - 260));
+    frame = window.requestAnimationFrame(tick);
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [mode, level, levelIndex, soundOn]);
+
+  useEffect(() => {
+    if (mode === "playing" && soundOn) {
+      startDreamMusic();
+    } else {
+      stopDreamMusic();
+    }
+
+    return () => {
+      stopDreamMusic();
+    };
+  }, [mode, soundOn, levelIndex]);
+
+  const camera = Math.max(
+    0,
+    Math.min(
+      Math.max(0, level.width - viewportWidth),
+      player.x - viewportWidth * 0.3
+    )
+  );
+
   const bg = levelIndex === 1 || levelIndex === 4 ? "#172452" : level.sky;
   const starsCount = collected.length;
 
@@ -266,12 +568,43 @@ export default function DreamJourneyPage() {
         {mode === "map" && <section className="mx-auto max-w-4xl rounded-[32px] border-4 border-white bg-white p-5 shadow-xl sm:p-8"><div className="text-center"><h2 className="font-heading text-2xl font-bold sm:text-3xl">Choose your dream world</h2><p className="mt-2 text-sm text-[#26345b]/70">Finish each level to unlock the next one.</p></div><div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{LEVELS.map((item, index) => <button key={item.name} disabled={index >= unlocked} onClick={() => startLevel(index)} className="overflow-hidden rounded-3xl border-2 border-[#e7e4f6] text-left transition hover:-translate-y-1 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-45"><div className="relative flex h-28 items-center justify-center" style={{ background: `linear-gradient(160deg, ${item.sky}, ${item.horizon})` }}><span className="text-5xl">{["☁️", "🍄", "🍭", "🏝️", "🏰"][index]}</span><span className="absolute right-3 top-3 rounded-full bg-white/85 px-2 py-1 text-xs font-bold">{index < unlocked ? "Unlocked" : "🔒 Locked"}</span></div><div className="p-4"><p className="text-xs font-bold uppercase tracking-wider text-[#7974b6]">Level {index + 1}</p><h3 className="mt-1 font-heading text-lg font-bold">{item.name}</h3><p className="mt-1 text-xs text-[#26345b]/65">{item.subtitle}</p></div></button>)}</div><div className="mt-6 text-center"><button onClick={() => setMode("select")} className="text-sm font-bold text-[#45458e]">← Change buddy</button></div></section>}
 
         {(mode === "playing" || mode === "levelComplete" || mode === "complete") && <section className="overflow-hidden rounded-[28px] border-4 border-white bg-white shadow-xl">
-          <div className="flex flex-wrap items-center justify-between gap-3 bg-white px-4 py-3 sm:px-6"><div className="flex items-center gap-3"><div className="h-12 w-12 overflow-hidden rounded-full bg-[#f8e8f5]"><CartoonBuddy animal={buddy.animal} className="w-full"/></div><div><p className="text-xs font-bold uppercase tracking-wider text-[#817bb8]">Level {levelIndex + 1} of 5</p><h2 className="font-heading text-lg font-bold sm:text-xl">{level.name}</h2></div></div><div className="flex items-center gap-3"><div className="rounded-full bg-[#fff3c9] px-3 py-2 text-sm font-bold text-[#8b6821]"><Star className="mr-1 inline" size={16} fill="currentColor"/> {starsCount}/{level.stars.length}<span className="ml-2 border-l border-[#8b6821]/20 pl-2">💎 {collectedGems.length}/{level.gems.length}</span></div><button onClick={() => setSoundOn((v) => !v)} aria-label={soundOn ? "Mute sound" : "Enable sound"} className="rounded-full bg-[#f3f0fb] p-2">{soundOn ? <Volume2 size={18}/> : <VolumeX size={18}/>}</button><button onClick={() => setMode("map")} aria-label="Level map" className="rounded-full bg-[#f3f0fb] p-2"><Home size={18}/></button><button onClick={restartLevel} aria-label="Restart level" className="rounded-full bg-[#f3f0fb] p-2"><RotateCcw size={18}/></button></div></div>
-          <div className="relative h-[400px] overflow-hidden touch-pan-y sm:h-[440px]" style={{ background: `linear-gradient(180deg, ${bg} 0%, ${level.horizon} 100%)` }}>
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-white px-4 py-3 sm:px-6"><div className="flex items-center gap-3"><div className="h-12 w-12 overflow-hidden rounded-full bg-[#f8e8f5]"><CartoonBuddy animal={buddy.animal} className="w-full"/></div><div><p className="text-xs font-bold uppercase tracking-wider text-[#817bb8]">Level {levelIndex + 1} of 5</p><h2 className="font-heading text-lg font-bold sm:text-xl">{level.name}</h2></div></div><div className="flex items-center gap-3"><div className="rounded-full bg-[#fff3c9] px-3 py-2 text-sm font-bold text-[#8b6821]"><Star className="mr-1 inline" size={16} fill="currentColor"/> {starsCount}/{level.stars.length}<span className="ml-2 border-l border-[#8b6821]/20 pl-2">💎 {collectedGems.length}/{level.gems.length}</span></div><button onClick={() => setSoundOn((v) => !v)} aria-label={soundOn ? "Mute sound" : "Enable sound"} className="rounded-full bg-[#f3f0fb] p-2">{soundOn ? <Volume2 size={18}/> : <VolumeX size={18}/>}</button><button
+            onClick={() => {
+              touchRef.current.left = false;
+              touchRef.current.right = false;
+              jumpRef.current = false;
+              keys.current = {};
+              playerRef.current = makePlayer();
+              collectedRef.current = [];
+              collectedGemsRef.current = [];
+              setPlayer(makePlayer());
+              setCollected([]);
+              setCollectedGems([]);
+              setLevelIndex(0);
+              setUnlocked(1);
+              setAttempt(1);
+              setMode("select");
+            }}
+            aria-label="Back to character selection"
+            title="Back to character selection"
+            className="rounded-full bg-[#f3f0fb] p-2"
+          >
+            <Home size={18}/>
+          </button><button onClick={restartLevel} aria-label="Restart level" className="rounded-full bg-[#f3f0fb] p-2"><RotateCcw size={18}/></button></div></div>
+
+          <div
+            ref={gameViewportRef}
+            className="relative h-[400px] select-none overflow-hidden touch-pan-y sm:h-[440px]"
+            style={{
+              background: `linear-gradient(180deg, ${bg} 0%, ${level.horizon} 100%)`,
+              WebkitUserSelect: "none",
+              WebkitTouchCallout: "none"
+            }}
+          >
             <div className="pointer-events-none absolute inset-0 opacity-50" style={{ backgroundImage: `radial-gradient(circle at 15% 20%, ${level.accent} 0 2px, transparent 3px), radial-gradient(circle at 75% 18%, #ffffff 0 2px, transparent 3px), radial-gradient(circle at 55% 35%, #ffffff 0 1px, transparent 2px)`, backgroundSize: "130px 100px, 180px 130px, 95px 85px" }}/>
             <div className="absolute bottom-0 h-16 w-full opacity-50" style={{ background: `linear-gradient(180deg, transparent, ${level.platform})` }}/>
             <div className="absolute inset-y-0 left-0" style={{ width: `${level.width}px`, transform: `translateX(-${camera}px)` }}>
-              {Array.from({ length: 18 }, (_, i) => <div key={i} className="absolute rounded-full opacity-40" style={{ left: i * 155 + 15, top: 35 + ((i * 47) % 140), width: 90 + (i % 3) * 35, height: 30 + (i % 2) * 15, background: levelIndex === 1 || levelIndex === 4 ? "#8f9de5" : "#ffffff", filter: "blur(1px)" }}/ >)}
+              {Array.from({ length: 18 }, (_, i) => <div key={i} className="absolute rounded-full opacity-40" style={{ left: i * 155 + 15, top: 35 + ((i * 47) % 140), width: 90 + (i % 3) * 35, height: 30 + (i % 2) * 15, background: levelIndex === 1 || levelIndex === 4 ? "#8f9de5" : "#ffffff", filter: "blur(1px)" }}/>)}
               {level.platforms.map((platform, index) => <div key={index} className="absolute rounded-[22px] border-b-[7px] shadow-md" style={{ left: platform[0], top: platform[1], width: platform[2], height: 24, background: level.platform, borderColor: level.edge }}><div className="absolute -top-2 left-3 right-3 h-4 rounded-full" style={{ background: level.platform }}/><span className="absolute -bottom-5 left-1/4 text-lg opacity-60">{levelIndex === 2 ? "🍬" : levelIndex === 1 ? "🌿" : "✦"}</span></div>)}
               {level.hazards.map((hazard, index) => <div key={index} className="absolute rounded-t-full border-b-4 border-[#cf639a] bg-[#ff9fc7] shadow-[0_0_12px_rgba(245,138,171,.5)]" style={{ left: hazard[0], top: hazard[1], width: hazard[2], height: hazard[3] }}><span className="absolute inset-0 flex items-center justify-center text-sm">✦</span></div>)}
               {level.gems.map((gem, index) => <div key={index} className={`absolute z-10 -translate-x-1/2 -translate-y-1/2 text-2xl transition ${collectedGems.includes(index) ? "scale-0 opacity-0" : "animate-[bounce_1.5s_infinite] drop-shadow-[0_0_10px_rgba(150,240,255,.9)]"}`} style={{ left: gem[0], top: gem[1] }}>💎</div>)}
@@ -281,10 +614,78 @@ export default function DreamJourneyPage() {
             </div>
             <div className="absolute left-3 top-3 rounded-full bg-white/85 px-3 py-2 text-xs font-bold shadow-sm">{level.subtitle}</div>
             <div className="absolute right-3 top-3 rounded-full bg-white/85 px-3 py-2 text-xs font-bold shadow-sm">Attempt {attempt}</div>
+
             {(mode === "levelComplete" || mode === "complete") && <div className="absolute inset-0 z-40 flex items-center justify-center bg-[#252454]/65 p-4 backdrop-blur-sm"><div className="w-full max-w-sm rounded-[28px] border-4 border-white bg-[#fffaf5] p-6 text-center shadow-2xl"><div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-[#fff0bd] text-[#ad7e24]"><Trophy size={28}/></div><h3 className="font-heading text-2xl font-bold">{mode === "complete" ? "You did it, dreamer!" : "Dream world complete!"}</h3><p className="mt-2 text-sm leading-relaxed text-[#26345b]/70">{mode === "complete" ? "You crossed all five dream worlds. What a magical adventure!" : `Lovely work! You collected ${starsCount} of ${level.stars.length} stars. Your next dream is waiting.`}</p><div className="my-5 flex justify-center gap-2">{level.stars.slice(0, 5).map((s, i) => <span key={i} className={`flex h-9 w-9 items-center justify-center rounded-xl ${collected.includes(i) ? "bg-[#fff0bd] text-[#bd8a24]" : "bg-[#eceaf7] text-[#aaa7c5]"}`}><Star size={19} fill={collected.includes(i) ? "currentColor" : "none"}/></span>)}</div><div className="flex flex-col gap-2">{mode === "complete" ? <button onClick={() => { setUnlocked(1); setMode("select"); setLevelIndex(0); }} className="rounded-full bg-[#45458e] px-5 py-3 text-sm font-bold text-white">Play again</button> : <button onClick={() => startLevel(levelIndex + 1)} className="rounded-full bg-[#45458e] px-5 py-3 text-sm font-bold text-white">Next dream world →</button>}<button onClick={() => setMode("map")} className="rounded-full border border-[#45458e]/20 bg-white px-5 py-3 text-sm font-bold">Back to dream map</button></div></div></div>}
           </div>
-          <div className="flex flex-wrap items-center justify-between gap-3 bg-[#fffaf7] px-4 py-3 sm:px-6"><p className="text-xs text-[#26345b]/70">Move with <b>← →</b> or <b>A / D</b>. Jump with <b>Space</b> or <b>Z</b>. Pink dream sparks reset you if touched. Collect the blue gems for bonus treasure. Falling restarts this level.</p><div className="flex gap-2"><button onPointerDown={() => { touchRef.current.left = true; }} onPointerUp={() => { touchRef.current.left = false; }} onPointerLeave={() => { touchRef.current.left = false; }} aria-label="Move left" className="flex h-12 w-12 touch-none items-center justify-center rounded-2xl bg-white shadow ring-1 ring-[#45458e]/15"><ArrowLeft/></button><button onPointerDown={() => { touchRef.current.right = true; }} onPointerUp={() => { touchRef.current.right = false; }} onPointerLeave={() => { touchRef.current.right = false; }} aria-label="Move right" className="flex h-12 w-12 touch-none items-center justify-center rounded-2xl bg-white shadow ring-1 ring-[#45458e]/15"><ArrowRight/></button><button onPointerDown={() => { jumpRef.current = true; }} aria-label="Jump" className="h-12 rounded-2xl bg-[#45458e] px-5 text-sm font-bold text-white shadow">JUMP ↑</button></div></div>
+
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-[#fffaf7] px-4 py-3 sm:px-6">
+            <p className="text-xs text-[#26345b]/70">Move with <b>← →</b> or <b>A / D</b>. Jump with <b>Space</b> or <b>Z</b>. Pink dream sparks reset you if touched. Collect the blue gems for bonus treasure. Falling restarts this level.</p>
+            <div className="flex gap-2 select-none" style={{ touchAction: "none", WebkitUserSelect: "none", WebkitTouchCallout: "none" }}>
+              <button
+                type="button"
+                onPointerDown={(event) => {
+                  event.preventDefault();
+                  event.currentTarget.setPointerCapture(event.pointerId);
+                  touchRef.current.left = true;
+                }}
+                onPointerUp={(event) => {
+                  touchRef.current.left = false;
+                  if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+                    event.currentTarget.releasePointerCapture(event.pointerId);
+                  }
+                }}
+                onPointerCancel={() => {
+                  touchRef.current.left = false;
+                }}
+                onLostPointerCapture={() => {
+                  touchRef.current.left = false;
+                }}
+                aria-label="Move left"
+                className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white shadow ring-1 ring-[#45458e]/15 active:bg-[#eae7fb] sm:h-12 sm:w-12"
+              >
+                <ArrowLeft size={24}/>
+              </button>
+
+              <button
+                type="button"
+                onPointerDown={(event) => {
+                  event.preventDefault();
+                  event.currentTarget.setPointerCapture(event.pointerId);
+                  touchRef.current.right = true;
+                }}
+                onPointerUp={(event) => {
+                  touchRef.current.right = false;
+                  if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+                    event.currentTarget.releasePointerCapture(event.pointerId);
+                  }
+                }}
+                onPointerCancel={() => {
+                  touchRef.current.right = false;
+                }}
+                onLostPointerCapture={() => {
+                  touchRef.current.right = false;
+                }}
+                aria-label="Move right"
+                className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white shadow ring-1 ring-[#45458e]/15 active:bg-[#eae7fb] sm:h-12 sm:w-12"
+              >
+                <ArrowRight size={24}/>
+              </button>
+
+              <button
+                type="button"
+                onPointerDown={(event) => {
+                  event.preventDefault();
+                  jumpRef.current = true;
+                }}
+                aria-label="Jump"
+                className="h-14 min-w-24 rounded-2xl bg-[#45458e] px-5 text-sm font-bold text-white shadow active:bg-[#33336e] sm:h-12"
+              >
+                JUMP ↑
+              </button>
+            </div>
+          </div>
         </section>}
+
         <footer className="mt-7 text-center text-xs text-[#26345b]/50">Made of stardust, soft clouds and big imaginations ✦</footer>
       </div>
     </main>
