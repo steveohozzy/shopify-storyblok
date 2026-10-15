@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-heading: var(--font-fredoka), sans-serif;
+  --font-heading: var(--font-heading), sans-serif;
   --font-sans: var(--font-quicksand), sans-serif;
-  --font-serif: var(--font-fredoka), sans-serif;
+  --font-serif: var(--font-heading), sans-serif;
   --font-mono: var(--font-quicksand), sans-serif;
 
   --color-background: var(--background);
@@ -33,36 +33,44 @@
 }
 
 :root {
-  --background: oklch(99% 0.006 345);
-  --foreground: oklch(30% 0.058 190);
+  color-scheme: light;
 
-  --card: var(--surface);
+  --background: #f3f4f2;
+  --foreground: oklch(22% 0.025 265);
+
+  --card: oklch(100% 0 0);
   --card-foreground: var(--foreground);
 
-  --popover: var(--surface);
+  --popover: oklch(100% 0 0);
   --popover-foreground: var(--foreground);
 
-  --primary: oklch(39% 0.069 188);
-  --primary-foreground: oklch(99% 0.006 345);
+  /* Dropzone neon blue */
+  --primary: #04d9ff;
+  --primary-foreground: #101321;
 
-  --secondary: oklch(85% 0.075 355);
-  --muted: oklch(96% 0.016 345);
-  --muted-foreground: oklch(51% 0.035 190);
+  --secondary: #e8fbff;
+  --secondary-foreground: #101321;
 
-  --accent: oklch(88% 0.044 175);
-  --destructive: oklch(55% 0.22 25);
+  --muted: #f4f8fb;
+  --muted-foreground: #536174;
 
-  --border: oklch(90% 0.018 175);
+  /* Violet accent */
+  --accent: #8b5cf6;
+  --accent-foreground: #ffffff;
+
+  --destructive: oklch(58% 0.23 27);
+
+  --border: #dce7ed;
   --input: var(--border);
 
-  --blush: oklch(85% 0.075 355);
-  --mint: oklch(86% 0.041 177);
-  --sunshine: oklch(88% 0.11 91);
-  --hero-shade: oklch(96% 0.023 25);
-  --surface: oklch(100% 0 0);
+  --blush: #f2eaff;
+  --mint: #e8fbff;
+  --sunshine: #fff4c2;
+  --hero-shade: #effcff;
+  --surface: #ffffff;
 
-  --shadow-dialog: 0 20px 70px oklch(30% 0.05 190 / 18%);
-  --overlay: oklch(25% 0.04 190 / 42%);
+  --shadow-dialog: 0 20px 70px rgb(16 19 33 / 14%);
+  --overlay: rgb(16 19 33 / 45%);
 
   --chart-4: var(--primary);
 }
@@ -149,5 +157,13 @@ body {
   100% {
     opacity: 0;
   }
+}
+
+main > section {
+  background: var(--background);
+}
+
+main > section:nth-of-type(even) {
+  background: var(--surface);
 }
 

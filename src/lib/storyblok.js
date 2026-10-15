@@ -25,6 +25,9 @@ import BrandValues from "@/components/BrandVaues";
 import PageIntro from "@/components/PageIntro";
 import RetailerSection from "@/components/RetailerSection";
 import RecycledMaterials from "@/components/RecycledMaterials";
+import CollectionSpotlight from "@/components/CollectionSpotlight";
+import CollectorVault from "@/components/CollectorsVault";
+import BuildDreamDisplay from "@/components/BuildDreamDisplay";
 
 import { apiPlugin, storyblokInit } from "@storyblok/react";
 
@@ -55,6 +58,9 @@ export const components = {
   PageIntro: PageIntro,
   RetailerSection: RetailerSection,
   RecycledMaterials: RecycledMaterials,
+  CollectionSpotlight: CollectionSpotlight,
+  CollectorVault: CollectorVault,
+  buildDreamDisplay: BuildDreamDisplay,
 };
 
 export const getStoryblokApi = storyblokInit({

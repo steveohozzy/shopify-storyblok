@@ -1,4 +1,5 @@
-import { Fredoka, Quicksand } from 'next/font/google';
+
+import { Plus_Jakarta_Sans, Quicksand } from 'next/font/google';
 import "./globals.css";
 
 import {
@@ -7,12 +8,13 @@ import {
 
 import Header from "@/components/Header";
 import { getBuddies } from "@/lib/storyblok";
-import { getNavigation } from "@/lib/getNavigation";
+import { getProductCategories } from "@/lib/shopify";
 import Footer from "@/components/Footer";
 
-const fredoka = Fredoka({ 
+const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  variable: '--font-fredoka', 
+  weight: ['700', '800'],
+  variable: '--font-heading',
 });
 
 const quicksand = Quicksand({
@@ -26,7 +28,6 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
-
   const storyblokApi = getStoryblokApi();
 
   const { data } = await storyblokApi.get(
@@ -37,7 +38,7 @@ export default async function RootLayout({ children }) {
   );
 
   const buddies = await getBuddies();
-
+  const categories = await getProductCategories();
 
   const header =
     data?.story?.content?.body?.find(
@@ -47,10 +48,14 @@ export default async function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${fredoka.variable} ${quicksand.variable}`}
+      className={`${plusJakarta.variable} ${quicksand.variable}`}
     >
-      <body className="min-h-screen flex flex-col">
-        <Header blok={header} buddies={buddies} />
+      <body className="min-h-screen flex flex-col bg-background">
+        <Header
+          blok={header}
+          buddies={buddies}
+          categories={categories}
+        />
 
         <main className="flex-1">
           {children}

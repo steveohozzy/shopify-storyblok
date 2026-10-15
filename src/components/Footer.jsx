@@ -8,6 +8,9 @@ import InstagramIcon from "./icons/InstagramIcon";
 import FacebookIcon from "./icons/FacebookIcon";
 import YoutubeIcon from "./icons/YouTubeIcon";
 import LinkedInIcon from "./icons/LinkedInIcon";
+import {
+  ArrowDownRight,
+} from "lucide-react";
 
 export default async function Footer() {
   const storyblokApi = getStoryblokApi();
@@ -89,17 +92,16 @@ export default async function Footer() {
     console.log(
   footerData?.story?.content?.body
 );
-  return ( <footer className="relative mt-auto border-t border-border bg-[#f9f9f9] text-foreground"> <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 md:grid-cols-3 md:gap-12 md:px-8 md:py-16"> <div> <Link href="/" aria-label="ADDO Play home" className="inline-flex">
-<Image
-src={
-footer.logo?.filename ||
-"https://www.addoplay.com/wp-content/uploads/2025/04/AP_Licensing.png"
-}
-alt="ADDO Play"
-width={180}
-height={80}
-className="h-auto max-w-[160px] object-contain"
-/> </Link>
+  return ( <footer className="relative mt-auto border-t border-border bg-[#f9f9f9] text-foreground"> <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 md:grid-cols-3 md:gap-12 md:px-8 md:py-16"> <div>  <Link
+              href="/"
+              className="relative flex h-20 w-40 shrink-0 items-center gap-1 text-3xl font-black tracking-tighter text-primary"
+            >
+              <ArrowDownRight
+                className="mt-2 h-5 w-5 shrink-0"
+                strokeWidth={4}
+              />
+              <span>DROPZONE</span>
+            </Link>
 
 
       {footer.brandText && (
@@ -179,7 +181,7 @@ className="h-auto max-w-[160px] object-contain"
   <div className="border-t border-border">
     <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-5 text-sm text-muted-foreground md:flex-row md:px-8">
       <p className="text-center md:text-left">
-        © {new Date().getFullYear()} ADDO Play. Made for colourful imaginations.
+        © {new Date().getFullYear()} Dropzone.
       </p>
 
       <nav aria-label="Legal links" className="flex flex-wrap justify-center gap-x-6 gap-y-2">

@@ -25,6 +25,10 @@ const nextConfig = {
 				hostname: "www.addoplay.com",
 				pathname: "/**",
 			},
+      {
+        protocol: "https",
+        hostname: "cdn.shopify.com",
+      },
     ],
   },
 };

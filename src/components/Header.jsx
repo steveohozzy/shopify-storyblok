@@ -1,11 +1,11 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import {
+  ArrowDownRight,
   ArrowUpRight,
   Heart,
   Search,
@@ -13,21 +13,45 @@ import {
   ArrowLeft,
   Bookmark,
   Plus,
+  Minus,
   Check,
+  ChevronDown,
+  ChevronRight,
+  ShoppingBag,
 } from "lucide-react";
 import { storyblokEditable } from "@storyblok/react/rsc";
 import { resolveLink } from "@/lib/storyblok";
 import { useBuddyFavourites } from "@/lib/useBuddyFavourites";
 import { useBuddyCollection } from "@/lib/useBuddyCollection";
+import {
+  getCartAction,
+  updateCartItemAction,
+  removeCartItemAction,
+} from "@/app/actions/cart";
+import { getStoredCartId, clearStoredCartId } from "@/lib/cart";
 
-export default function Header({ blok, buddies = [] }) {
+export default function Header({ blok, buddies = [], categories = [] }) {
   const [open, setOpen] = useState(false);
   const [panel, setPanel] = useState(null);
   const [query, setQuery] = useState("");
   const { saved, toggleFavourite } = useBuddyFavourites(buddies);
   const { collected, toggleCollection } = useBuddyCollection(buddies);
   const [selected, setSelected] = useState(null);
+  const [shopOpen, setShopOpen] = useState(false);
+  const [mobileShopOpen, setMobileShopOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [cart, setCart] = useState(null);
+  const [cartLoading, setCartLoading] = useState(false);
+  const [cartError, setCartError] = useState("");
+  const [updatingLine, setUpdatingLine] = useState(null);
   const pathname = usePathname();
+  const router = useRouter();
+
+  const categoryLinks = categories.map((category) => ({
+    _uid: `shopify-${category}`,
+    Label: category,
+    href: `/products?category=${encodeURIComponent(category)}`,
+  }));
 
   useEffect(() => {
     function handleKeyDown(event) {
@@ -35,6 +59,9 @@ export default function Header({ blok, buddies = [] }) {
         setPanel(null);
         setSelected(null);
         setOpen(false);
+        setShopOpen(false);
+        setMobileShopOpen(false);
+        setCartOpen(false);
       }
     }
 
@@ -45,7 +72,60 @@ export default function Header({ blok, buddies = [] }) {
     };
   }, []);
 
+  useEffect(() => {
+    let active = true;
+
+    async function refreshCart(event) {
+      if (event?.detail?.cart) {
+        if (active) {
+          setCart(event.detail.cart);
+          setCartError("");
+        }
+        return;
+      }
+
+      const cartId = getStoredCartId();
+
+      if (!cartId) {
+        if (active) setCart(null);
+        return;
+      }
+
+      try {
+        const updatedCart = await getCartAction(cartId);
+
+        if (!active) return;
+
+        if (updatedCart) {
+          setCart(updatedCart);
+        } else {
+          clearStoredCartId();
+          setCart(null);
+        }
+
+        setCartError("");
+      } catch (error) {
+        if (active) {
+          setCartError("Unable to load your bag. Please try again.");
+        }
+      }
+    }
+
+    refreshCart();
+
+    window.addEventListener("cart:updated", refreshCart);
+
+    return () => {
+      active = false;
+      window.removeEventListener("cart:updated", refreshCart);
+    };
+  }, []);
+
   function getNavHref(item) {
+    if (item.href) {
+      return item.href;
+    }
+
     const pageLink = resolveLink(item.Link);
 
     if (item.HomepageAnchor) {
@@ -68,6 +148,8 @@ export default function Header({ blok, buddies = [] }) {
     setSelected(null);
     setPanel("search");
     setOpen(false);
+    setMobileShopOpen(false);
+    setCartOpen(false);
   }
 
   function openFavourites() {
@@ -75,13 +157,92 @@ export default function Header({ blok, buddies = [] }) {
     setSelected(null);
     setPanel("saved");
     setOpen(false);
+    setMobileShopOpen(false);
+    setCartOpen(false);
   }
 
+  
   function openCollection() {
-    setQuery("");
-    setSelected(null);
-    setPanel("collection");
     setOpen(false);
+    setShopOpen(false);
+    setMobileShopOpen(false);
+    setCartOpen(false);
+    setPanel(null);
+    setSelected(null);
+
+    router.push("/your-collection");
+  }
+
+  async function openCart() {
+    setCartOpen(true);
+    setOpen(false);
+    setPanel(null);
+    setSelected(null);
+    setShopOpen(false);
+    setMobileShopOpen(false);
+    setCartLoading(true);
+    setCartError("");
+
+    try {
+      const cartId = getStoredCartId();
+
+      if (!cartId) {
+        setCart(null);
+        return;
+      }
+
+      const updatedCart = await getCartAction(cartId);
+
+      if (updatedCart) {
+        setCart(updatedCart);
+      } else {
+        clearStoredCartId();
+        setCart(null);
+      }
+    } catch (error) {
+      setCartError("Unable to load your bag. Please try again.");
+    } finally {
+      setCartLoading(false);
+    }
+  }
+
+  async function changeCartQuantity(line, quantity) {
+    const cartId = getStoredCartId();
+
+    if (!cartId || !line?.id || updatingLine) return;
+
+    setUpdatingLine(line.id);
+    setCartError("");
+
+    try {
+      const updatedCart =
+        quantity < 1
+          ? await removeCartItemAction(cartId, line.id)
+          : await updateCartItemAction(cartId, line.id, quantity);
+
+      setCart(updatedCart);
+
+      window.dispatchEvent(
+        new CustomEvent("cart:updated", {
+          detail: { cart: updatedCart },
+        })
+      );
+    } catch (error) {
+      setCartError(error.message || "Unable to update your bag.");
+    } finally {
+      setUpdatingLine(null);
+    }
+  }
+
+  const cartCount = cart?.totalQuantity || 0;
+  const cartLines = cart?.lines?.edges?.map((edge) => edge.node) || [];
+  const cartSubtotal = cart?.cost?.subtotalAmount;
+
+  function formatCartPrice(price) {
+    return new Intl.NumberFormat("en-GB", {
+      style: "currency",
+      currency: price?.currencyCode || "GBP",
+    }).format(Number(price?.amount || 0));
   }
 
   const results = buddies.filter((buddy) => {
@@ -116,22 +277,77 @@ export default function Header({ blok, buddies = [] }) {
           <div className="flex h-24 items-center justify-between">
             <Link
               href="/"
-              className="relative h-20 w-40 shrink-0"
-              onClick={() => setOpen(false)}
+              className="relative flex h-20 w-40 shrink-0 items-center gap-1 text-3xl font-black tracking-tighter text-primary"
+              onClick={() => {
+                setOpen(false);
+                setShopOpen(false);
+                setMobileShopOpen(false);
+              }}
             >
-              <Image
-                src={
-                  blok?.Logo?.filename ||
-                  "https://www.addoplay.com/wp-content/uploads/2025/04/AP_Licensing.png"
-                }
-                alt={blok?.LogoAlt || "ADDO Play"}
-                fill
-                className="object-contain object-left"
+              <ArrowDownRight
+                className="mt-2 h-5 w-5 shrink-0"
+                strokeWidth={4}
               />
+              <span>DROPZONE</span>
             </Link>
 
             {/* Desktop navigation */}
             <nav className="hidden items-center gap-6 md:flex lg:gap-8">
+              {categoryLinks.length > 0 && (
+                <div
+                  className="relative"
+                  onMouseEnter={() => setShopOpen(true)}
+                  onMouseLeave={() => setShopOpen(false)}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setShopOpen(!shopOpen)}
+                    aria-expanded={shopOpen}
+                    aria-haspopup="true"
+                    className="inline-flex items-center gap-1.5 py-2 font-heading text-sm text-foreground transition-colors hover:text-primary lg:text-base"
+                  >
+                    Shop
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform ${
+                        shopOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  <div
+                    className={`absolute left-0 top-full z-[70] w-64 pt-3 transition-all duration-200 ${
+                      shopOpen
+                        ? "visible translate-y-0 opacity-100"
+                        : "invisible -translate-y-2 opacity-0"
+                    }`}
+                  >
+                    <div className="max-h-[70vh] overflow-y-auto rounded-2xl border border-border bg-white p-2 shadow-xl">
+                      <Link
+                        href="/products"
+                        onClick={() => setShopOpen(false)}
+                        className="flex items-center justify-between rounded-xl px-4 py-3 font-heading text-sm font-bold text-primary transition-colors hover:bg-muted"
+                      >
+                        All products
+                        <ArrowUpRight className="h-4 w-4" />
+                      </Link>
+
+                      <div className="my-1 border-t border-border" />
+
+                      {categoryLinks.map((item) => (
+                        <Link
+                          key={item._uid}
+                          href={item.href}
+                          onClick={() => setShopOpen(false)}
+                          className="block rounded-xl px-4 py-3 text-sm text-foreground transition-colors hover:bg-muted hover:text-primary"
+                        >
+                          {item.Label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {blok?.Navigation?.map((item) => (
                 <Link
                   key={item._uid}
@@ -157,7 +373,7 @@ export default function Header({ blok, buddies = [] }) {
               <button
                 type="button"
                 onClick={openSearch}
-                aria-label="Search Snuggle Buddies"
+                aria-label="Search items"
                 title="Search"
                 className="relative flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl text-foreground transition-colors hover:bg-muted hover:text-primary"
               >
@@ -167,7 +383,7 @@ export default function Header({ blok, buddies = [] }) {
               <button
                 type="button"
                 onClick={openFavourites}
-                aria-label={`Favourite buddies (${saved.length})`}
+                aria-label={`Favourite b items (${saved.length})`}
                 title="Favourites"
                 className="relative flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl text-foreground transition-colors hover:bg-muted hover:text-primary"
               >
@@ -195,6 +411,22 @@ export default function Header({ blok, buddies = [] }) {
                 {collected.length > 0 && (
                   <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
                     {collected.length}
+                  </span>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={openCart}
+                aria-label={`Shopping bag (${cartCount} items)`}
+                title="Shopping bag"
+                className="relative flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl text-foreground transition-colors hover:bg-muted hover:text-primary"
+              >
+                <ShoppingBag className="h-5 w-5" />
+
+                {cartCount > 0 && (
+                  <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
+                    {cartCount}
                   </span>
                 )}
               </button>
@@ -233,7 +465,10 @@ export default function Header({ blok, buddies = [] }) {
       {/* Mobile backdrop */}
       <div
         aria-hidden="true"
-        onClick={() => setOpen(false)}
+        onClick={() => {
+          setOpen(false);
+          setMobileShopOpen(false);
+        }}
         className={`fixed inset-0 z-50 bg-foreground/30 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
           open ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
@@ -252,7 +487,10 @@ export default function Header({ blok, buddies = [] }) {
           <Link
             href="/"
             className="relative h-14 w-40 shrink-0"
-            onClick={() => setOpen(false)}
+            onClick={() => {
+              setOpen(false);
+              setMobileShopOpen(false);
+            }}
           >
             <Image
               src={
@@ -267,7 +505,10 @@ export default function Header({ blok, buddies = [] }) {
 
           <button
             type="button"
-            onClick={() => setOpen(false)}
+            onClick={() => {
+              setOpen(false);
+              setMobileShopOpen(false);
+            }}
             aria-label="Close menu"
             className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-border text-2xl text-foreground transition-colors hover:bg-muted"
           >
@@ -276,15 +517,79 @@ export default function Header({ blok, buddies = [] }) {
         </div>
 
         <nav className="flex-1 px-5 py-4">
+          {/* Mobile Shop menu */}
+          {categoryLinks.length > 0 && (
+            <div className="border-b border-border">
+              <button
+                type="button"
+                onClick={() => setMobileShopOpen(!mobileShopOpen)}
+                aria-expanded={mobileShopOpen}
+                aria-controls="mobile-shop-categories"
+                className="flex w-full items-center justify-between px-3 py-5 font-heading text-lg text-foreground transition-colors hover:text-primary"
+              >
+                <span>Shop</span>
+
+                <ChevronDown
+                  className={`h-5 w-5 text-muted-foreground transition-transform duration-200 ${
+                    mobileShopOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+
+              <div
+                id="mobile-shop-categories"
+                className={`grid transition-[grid-template-rows] duration-300 ${
+                  mobileShopOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                }`}
+              >
+                <div className="overflow-hidden">
+                  <div className="pb-3 pl-3">
+                    <Link
+                      href="/products"
+                      onClick={() => {
+                        setOpen(false);
+                        setMobileShopOpen(false);
+                      }}
+                      className="flex items-center justify-between rounded-xl px-3 py-3 text-sm font-bold text-primary transition-colors hover:bg-muted"
+                    >
+                      <span>All products</span>
+                      <ArrowUpRight className="h-4 w-4" />
+                    </Link>
+
+                    {categoryLinks.map((item) => (
+                      <Link
+                        key={item._uid}
+                        href={item.href}
+                        onClick={() => {
+                          setOpen(false);
+                          setMobileShopOpen(false);
+                        }}
+                        className="flex items-center justify-between rounded-xl px-3 py-3 text-sm text-foreground transition-colors hover:bg-muted hover:text-primary"
+                      >
+                        <span>{item.Label}</span>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {blok?.Navigation?.map((item) => (
             <Link
               key={item._uid}
               href={getNavHref(item)}
               target={item.OpenInNewTab ? "_blank" : undefined}
               rel={
-                item.OpenInNewTab ? "noopener noreferrer" : undefined
+                item.OpenInNewTab
+                  ? "noopener noreferrer"
+                  : undefined
               }
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                setOpen(false);
+                setMobileShopOpen(false);
+              }}
               className="group flex items-center justify-between border-b border-border px-3 py-5 font-heading text-lg text-foreground transition-colors hover:text-primary"
             >
               <span>{item.Label}</span>
@@ -319,9 +624,237 @@ export default function Header({ blok, buddies = [] }) {
             className="col-span-2 flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary px-3 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
           >
             <Search className="h-4 w-4" />
-            Find a buddy
+            Find an item
+          </button>
+
+          <button
+            type="button"
+            onClick={openCart}
+            className="col-span-2 flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-border px-3 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+          >
+            <ShoppingBag className="h-4 w-4" />
+            Shopping bag ({cartCount})
           </button>
         </div>
+      </aside>
+
+      {/* Shopping bag backdrop */}
+      <div
+        aria-hidden="true"
+        onClick={() => setCartOpen(false)}
+        className={`fixed inset-0 z-[80] bg-foreground/30 backdrop-blur-sm transition-opacity duration-300 ${
+          cartOpen ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      />
+
+      {/* Shopping bag panel */}
+      <aside
+        aria-label="Shopping bag"
+        aria-hidden={!cartOpen}
+        className={`fixed right-0 top-0 z-[90] flex h-dvh w-full max-w-md flex-col border-l border-border bg-white shadow-2xl transition-transform duration-300 ${
+          cartOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="flex items-center justify-between border-b border-border px-6 py-5">
+          <div>
+            <h2 className="font-heading text-2xl font-bold text-foreground">
+              Your bag
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {cartCount} {cartCount === 1 ? "item" : "items"}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setCartOpen(false)}
+            aria-label="Close shopping bag"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-foreground transition-colors hover:bg-muted"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        {cartError && (
+          <div
+            role="alert"
+            className="mx-5 mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-700"
+          >
+            {cartError}
+            <button
+              type="button"
+              onClick={openCart}
+              className="ml-2 font-bold underline"
+            >
+              Retry
+            </button>
+          </div>
+        )}
+
+        <div className="flex-1 overflow-y-auto p-5">
+          {cartLoading ? (
+            <div className="py-16 text-center text-sm text-muted-foreground">
+              Loading your bag...
+            </div>
+          ) : cartLines.length > 0 ? (
+            <div className="flex flex-col gap-5">
+              {cartLines.map((line) => {
+                const product = line.merchandise?.product;
+                const variant = line.merchandise;
+                const busy = updatingLine === line.id;
+
+                return (
+                  <div
+                    key={line.id}
+                    className="flex gap-4 border-b border-border pb-5"
+                  >
+                    <div className="h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-muted">
+                      {variant?.image?.url && (
+                        <img
+                          src={variant.image.url}
+                          alt={variant.image.altText || product?.title || ""}
+                          className="h-full w-full object-cover"
+                        />
+                      )}
+                    </div>
+
+                    <div className="flex min-w-0 flex-1 flex-col">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="font-heading font-bold text-foreground">
+                            {product?.title || "Product"}
+                          </p>
+
+                          {variant?.title &&
+                            variant.title !== "Default Title" && (
+                              <p className="mt-1 text-xs text-muted-foreground">
+                                {variant.title}
+                              </p>
+                            )}
+                        </div>
+
+                        <p className="shrink-0 text-sm font-bold text-foreground">
+                          {formatCartPrice({
+                            amount:
+                              Number(variant?.price?.amount || 0) *
+                              line.quantity,
+                            currencyCode:
+                              variant?.price?.currencyCode || "GBP",
+                          })}
+                        </p>
+                      </div>
+
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {formatCartPrice(variant?.price)} each
+                      </p>
+
+                      <div className="mt-auto flex items-center justify-between pt-3">
+                        <div className="flex items-center rounded-full border border-border">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              changeCartQuantity(line, line.quantity - 1)
+                            }
+                            disabled={busy || updatingLine !== null}
+                            aria-label={`Decrease quantity of ${product?.title || "product"}`}
+                            className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-muted disabled:opacity-40"
+                          >
+                            <Minus className="h-3.5 w-3.5" />
+                          </button>
+
+                          <span className="min-w-8 text-center text-sm font-semibold">
+                            {line.quantity}
+                          </span>
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              changeCartQuantity(line, line.quantity + 1)
+                            }
+                            disabled={busy || updatingLine !== null}
+                            aria-label={`Increase quantity of ${product?.title || "product"}`}
+                            className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-muted disabled:opacity-40"
+                          >
+                            <Plus className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => changeCartQuantity(line, 0)}
+                          disabled={busy || updatingLine !== null}
+                          className="text-xs font-semibold text-muted-foreground underline transition-colors hover:text-red-600 disabled:opacity-40"
+                        >
+                          {busy ? "Updating..." : "Remove"}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="flex h-full flex-col items-center justify-center px-5 text-center">
+              <ShoppingBag className="h-10 w-10 text-muted-foreground/50" />
+
+              <h3 className="mt-5 font-heading text-xl font-bold text-foreground">
+                Your bag is empty
+              </h3>
+
+              <p className="mt-2 text-sm text-muted-foreground">
+                Found something you love? Add it to your bag and it will appear here.
+              </p>
+
+              <Link
+                href="/products"
+                onClick={() => setCartOpen(false)}
+                className="mt-6 inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90"
+              >
+                Explore products
+                <ArrowUpRight className="h-4 w-4" />
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {cartLines.length > 0 && (
+          <div className="border-t border-border bg-white p-5">
+            <div className="flex items-center justify-between">
+              <span className="font-heading text-base font-bold text-foreground">
+                Subtotal
+              </span>
+
+              <span className="text-lg font-bold text-foreground">
+                {formatCartPrice(cartSubtotal)}
+              </span>
+            </div>
+
+            <p className="mt-2 text-xs text-muted-foreground">
+              Shipping and any applicable taxes are calculated at checkout.
+            </p>
+
+            <a
+              href={cart?.checkoutUrl || undefined}
+              onClick={(event) => {
+                if (!cart?.checkoutUrl) event.preventDefault();
+              }}
+              className={`mt-5 flex min-h-14 items-center justify-center gap-2 rounded-full bg-primary px-6 py-4 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90 ${
+                !cart?.checkoutUrl ? "pointer-events-none opacity-50" : ""
+              }`}
+            >
+              Checkout
+              <ArrowUpRight className="h-4 w-4" />
+            </a>
+
+            <button
+              type="button"
+              onClick={() => setCartOpen(false)}
+              className="mt-3 w-full py-2 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Continue shopping
+            </button>
+          </div>
+        )}
       </aside>
 
       {/* Search, favourites and collection dialog */}
@@ -348,18 +881,18 @@ export default function Header({ blok, buddies = [] }) {
                   className="font-heading text-2xl font-bold text-foreground"
                 >
                   {panel === "saved"
-                    ? "Your favourite buddies"
+                    ? "Your favourite items"
                     : panel === "collection"
                       ? "My collection"
-                      : "Find your buddy"}
+                      : "Find your collectible"}
                 </h2>
 
                 <p className="mt-1 text-sm text-muted-foreground">
                   {panel === "saved"
                     ? "Your little cuddle collection."
                     : panel === "collection"
-                      ? "The buddies you already own."
-                      : "A little friend is waiting to meet you."}
+                      ? "The items you already own."
+                      : "A new item is calling you."}
                 </p>
               </div>
 
@@ -476,8 +1009,8 @@ export default function Header({ blok, buddies = [] }) {
                       <input
                         type="search"
                         autoFocus
-                        aria-label="Search animal buddies"
-                        placeholder="Elephant, fox, dinosaur..."
+                        aria-label="Search items"
+                        placeholder="Figure, card, pop..."
                         value={query}
                         onChange={(event) => setQuery(event.target.value)}
                         className="h-12 min-w-0 flex-1 bg-transparent text-foreground outline-none placeholder:text-muted-foreground"
@@ -569,8 +1102,8 @@ export default function Header({ blok, buddies = [] }) {
                               }
                               className={`flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors hover:bg-white ${
                                 isCollected
-                                  ? " text-primary"
-                                  : "bg-primary text-primary text-primary-foreground"
+                                  ? "text-primary"
+                                  : "bg-primary text-primary-foreground"
                               }`}
                             >
                               {isCollected ? (
@@ -596,15 +1129,15 @@ export default function Header({ blok, buddies = [] }) {
                           ? "No favourites just yet"
                           : panel === "collection"
                             ? "Your collection is waiting"
-                            : "No buddies found"}
+                            : "No items found"}
                       </p>
 
                       <p className="mt-2 text-sm text-muted-foreground">
                         {panel === "saved"
-                          ? "Search for a buddy and tap the heart to save it here."
+                          ? "Search for a collectible and tap the heart to save it here."
                           : panel === "collection"
-                            ? "Add buddies you already own using the plus button on their cards."
-                            : "Try another name or category, such as fox or dinosaur."}
+                            ? "Add items you already own using the plus button on their cards."
+                            : "Try another name or category, such as figure or card."}
                       </p>
 
                       {(panel === "saved" || panel === "collection") && (
@@ -613,7 +1146,7 @@ export default function Header({ blok, buddies = [] }) {
                           onClick={openSearch}
                           className="mt-5 cursor-pointer rounded-full bg-primary px-5 py-3 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90"
                         >
-                          Find a buddy
+                          Find an item
                         </button>
                       )}
                     </div>
@@ -625,8 +1158,8 @@ export default function Header({ blok, buddies = [] }) {
                     {panel === "saved"
                       ? `${results.length} favourite${results.length === 1 ? "" : "s"}`
                       : panel === "collection"
-                        ? `${results.length} buddy${results.length === 1 ? "" : "ies"} in your collection`
-                        : `${results.length} buddy${results.length === 1 ? "" : "ies"} found`}
+                        ? `${results.length} item${results.length === 1 ? "" : "s"} in your collection`
+                        : `${results.length} item${results.length === 1 ? "" : "s"} found`}
                   </p>
                 </div>
               </>

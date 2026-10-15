@@ -1,74 +1,90 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Leaf, Heart } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { storyblokEditable } from "@storyblok/react/rsc";
 import { renderRichText } from "@storyblok/react";
 import { resolveLink } from "@/lib/storyblok";
 
 export default function StorySection({ blok }) {
-const title = blok.Title || "Not just a soft toy. A friend for the everyday.";
-const description = blok.Blurb
-? renderRichText(blok.Blurb)
-: "The make-believe adventures. The cosy afternoons. The one-more-hug before bed. Snuggle Buddies belong in those little moments, bringing a whole lot of personality and a little extra softness.";
+  const title = blok.Title || "Good collections are a point of view.";
+  const titleAccent = blok.titleAccent;
+  const description = blok.Blurb
+    ? renderRichText(blok.Blurb)
+    : "Meet the artists, makers and collectors shaping the world beyond the shelf.";
 
-return (
-<section
-{...storyblokEditable(blok)}
-id="story"
-className="bg-accent px-4 py-16 md:px-8 md:py-20"
-> <div className="mx-auto grid max-w-7xl items-center gap-8 md:grid-cols-2 md:gap-12 lg:gap-16"> <div className="relative aspect-[4/3] overflow-hidden rounded-3xl">
-<Image
-src={blok.Image?.filename || "/images/heritage.png"}
-alt={
-blok.ImageAlt ||
-"The original Snuggle Buddies family of colourful soft animal toys"
-}
-fill
-sizes="(max-width: 767px) 100vw, 50vw"
-className="object-cover"
-loading="lazy"
-quality={85}
-/> </div>
+  const ctaLink = resolveLink(blok.CtaLink) || "/our-world";
+  const image = blok.Image?.filename || "/hero-collectibles.png";
+  const imageAlt =
+    blok.ImageAlt || "Warm wood display shelving with collectibles";
 
+  return (
+    <section
+      {...storyblokEditable(blok)}
+      
+    >
+      <div id="journal"
+      className={`mx-auto grid max-w-[1440px] gap-8 px-5 py-16 sm:px-8 lg:grid-cols-[1fr_1.25fr] lg:px-12 lg:py-28 ${
+        blok.Flip ? "[&>div]:order-2 [&>a]:order-1" : ""
+      }`}>
+      <div>
+        <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.2em] text-[#0a9df5]">
+          {blok.Tagline || "The vault notes"}
+        </p>
 
-    <div className="story-copy">
-      <div className="mb-5 inline-flex items-center gap-2 text-sm font-bold text-primary">
-        <Leaf size={17} aria-hidden="true" />
-        {blok.Tagline || "Our snuggly little world"}
+        <h2 className="max-w-xl font-heading text-5xl font-black leading-[0.92] tracking-[-0.07em] text-foreground sm:text-6xl">
+          {title}
+          {titleAccent && (
+            <>
+              {" "}
+              <span className="text-[#0a9df5]">
+                {titleAccent}
+              </span>
+            </>
+          )}
+        </h2>
+
+        {blok.Blurb ? (
+          <div
+            className="mt-8 max-w-sm text-sm leading-relaxed text-[#64727c]"
+            dangerouslySetInnerHTML={{
+              __html: description,
+            }}
+          />
+        ) : (
+          <p className="mt-8 max-w-sm text-sm leading-relaxed text-[#64727c]">
+            {description}
+          </p>
+        )}
       </div>
 
-      <h2 className="font-heading text-3xl font-bold leading-tight text-primary md:text-4xl lg:text-5xl">
-        {title}
-      </h2>
-
-      {blok.Blurb ? (
-        <div
-          className="mt-5 max-w-xl space-y-4 text-base leading-8 text-muted-foreground md:text-lg"
-          dangerouslySetInnerHTML={{
-            __html: description,
-          }}
+      <Link
+        href={ctaLink}
+        className="group relative block min-h-[300px] overflow-hidden rounded-[24px] bg-[#d8eef8]"
+        aria-label={blok.ctaText || "Read the journal"}
+      >
+        <Image
+          src={image}
+          alt={imageAlt}
+          fill
+          sizes="(max-width: 1023px) 100vw, 60vw"
+          className="object-cover transition-transform duration-700 group-hover:scale-105"
+          loading="lazy"
+          quality={85}
         />
-      ) : (
-        <p className="mt-5 max-w-xl text-base leading-8 text-muted-foreground md:text-lg">
-          {description}
-        </p>
-      )}
 
-      {blok.ctaText && (
-        <div className="mt-7">
-          <Link
-            href={resolveLink(blok.CtaLink) || "/our-world"}
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-background px-5 py-3 text-sm font-semibold text-primary shadow-sm transition-colors hover:bg-muted shadow-md"
-          >
-            {blok.ctaText}
-            <Heart size={17} aria-hidden="true" />
-          </Link>
-        </div>
-      )}
-    </div>
-  </div>
-</section>
+        {blok.ctaText && (
+          <div className="absolute bottom-5 left-5 flex items-center gap-2">
+            <span className="rounded-full bg-white px-4 py-3 text-[10px] font-bold uppercase tracking-[0.15em] text-foreground">
+              {blok.ctaText}
+            </span>
 
-
-);
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0a9df5] text-white transition-colors group-hover:bg-foreground">
+              <ArrowRight className="h-4 w-4" />
+            </span>
+          </div>
+        )}
+      </Link>
+      </div>
+    </section>
+  );
 }
