@@ -128,12 +128,12 @@ export default function HomeHero({ blok }) {
 
         {/* Side images */}
         <div
-          className={`grid min-h-0 grid-cols-2 gap-3 transition-[grid-template-rows] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] lg:grid-cols-1 ${
+          className={`grid min-h-0 grid-cols-2 gap-3 transition-[grid-template-rows,grid-template-columns] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] lg:grid-cols-1 ${
             activeCard === null
-              ? "lg:grid-rows-2"
+              ? "grid-rows-1 lg:grid-rows-2"
               : activeCard === 0
-                ? "lg:grid-rows-[minmax(0,1fr)_minmax(0,0fr)]"
-                : "lg:grid-rows-[minmax(0,0fr)_minmax(0,1fr)]"
+                ? "grid-rows-1 lg:grid-rows-[minmax(0,1fr)_minmax(0,0fr)]"
+                : "grid-rows-1 lg:grid-rows-[minmax(0,0fr)_minmax(0,1fr)]"
           }`}
         >
           {sideCards.map((card, idx) => {
@@ -155,11 +155,11 @@ export default function HomeHero({ blok }) {
                     setActiveCard(isActive ? null : idx);
                   }
                 }}
-                className={`group relative min-h-[190px] min-w-0 overflow-hidden rounded-[24px] border bg-[#e8edf0] transition-[opacity,transform,border-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:min-h-[270px] lg:min-h-0 ${
+                className={`group relative min-h-[190px] min-w-0 overflow-hidden rounded-[24px] border bg-[#e8edf0] transition-[opacity,transform,border-color,box-shadow] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] sm:min-h-[270px] lg:min-h-0 ${
                   isHidden
-                    ? "pointer-events-none scale-[0.96] border-transparent opacity-0"
+                    ? "pointer-events-none scale-[0.96] border-transparent opacity-0 hidden lg:block"
                     : isActive
-                      ? "cursor-pointer border-[#04d9ff]/60 shadow-[0_0_25px_rgba(4,217,255,0.12)]"
+                      ? "col-span-2 min-h-[390px] cursor-pointer border-[#04d9ff]/60 shadow-[0_0_25px_rgba(4,217,255,0.12)] sm:min-h-[560px] lg:col-span-1 lg:min-h-0"
                       : "cursor-pointer border-transparent hover:border-[#04d9ff]/60 hover:shadow-[0_8px_25px_rgba(16,19,33,0.08)]"
                 }`}
               >
