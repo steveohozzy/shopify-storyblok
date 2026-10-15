@@ -1,4 +1,3 @@
-
 const SHOPIFY_STORE_DOMAIN = process.env.SHOPIFY_DOMAIN;
 const SHOPIFY_STOREFRONT_ACCESS_TOKEN =
   process.env.SHOPIFY_STOREFRONT_TOKEN;
@@ -8,70 +7,97 @@ export async function getProducts() {
     throw new Error("Shopify environment variables are missing.");
   }
 
-  const query = `
-    query GetProducts {
-      products(first: 24) {
-        edges {
-          node {
-            id
-            title
-            handle
-            description
-            vendor
-            productType
-            featuredImage {
-              url
-              altText
-            }
-            priceRange {
-              minVariantPrice {
-                amount
-                currencyCode
+  const products = [];
+  let hasNextPage = true;
+  let cursor = null;
+
+  while (hasNextPage) {
+    const query = `
+      query GetProducts($cursor: String) {
+        products(first: 250, after: $cursor) {
+          edges {
+            node {
+              id
+              title
+              handle
+              description
+              vendor
+              productType
+              availableForSale
+              featuredImage {
+                url
+                altText
+              }
+              priceRange {
+                minVariantPrice {
+                  amount
+                  currencyCode
+                }
               }
             }
           }
+          pageInfo {
+            hasNextPage
+            endCursor
+          }
         }
       }
-    }
-  `;
+    `;
 
-  const response = await fetch(
-    `https://${SHOPIFY_STORE_DOMAIN}/api/2026-10/graphql.json`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Shopify-Storefront-Access-Token":
-          SHOPIFY_STOREFRONT_ACCESS_TOKEN,
-      },
-      body: JSON.stringify({ query }),
-      next: { revalidate: 60 },
-    }
-  );
+    const response = await fetch(
+      `https://${SHOPIFY_STORE_DOMAIN}/api/2026-10/graphql.json`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Shopify-Storefront-Access-Token":
+            SHOPIFY_STOREFRONT_ACCESS_TOKEN,
+        },
+        body: JSON.stringify({
+          query,
+          variables: { cursor },
+        }),
+        next: { revalidate: 60 },
+      }
+    );
 
-  if (!response.ok) {
-    throw new Error(`Shopify request failed: ${response.status}`);
+    if (!response.ok) {
+      throw new Error(`Shopify request failed: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    if (result.errors || !result.data?.products) {
+      throw new Error("Unable to fetch Shopify products.");
+    }
+
+    result.data.products.edges.forEach(({ node }) => {
+      products.push({
+        id: node.id,
+        name: node.title,
+        handle: node.handle,
+        description: node.description,
+        category: node.productType || node.vendor || "Toy",
+        line: node.vendor || node.productType || "",
+        image: node.featuredImage?.url || "",
+        imageAlt: node.featuredImage?.altText || node.title,
+        price: node.priceRange.minVariantPrice.amount,
+        currency: node.priceRange.minVariantPrice.currencyCode,
+
+        // Additional fields for filtering Mystery Drop products.
+        availableForSale: node.availableForSale,
+        vendor: node.vendor || "",
+        productType: node.productType || "",
+
+        url: `https://${SHOPIFY_STORE_DOMAIN}/products/${node.handle}`,
+      });
+    });
+
+    hasNextPage = result.data.products.pageInfo.hasNextPage;
+    cursor = result.data.products.pageInfo.endCursor;
   }
 
-  const result = await response.json();
-
-  if (result.errors || !result.data?.products) {
-    throw new Error("Unable to fetch Shopify products.");
-  }
-
-  return result.data.products.edges.map(({ node }) => ({
-    id: node.id,
-    name: node.title,
-    handle: node.handle,
-    description: node.description,
-    category: node.productType || node.vendor || "Toy",
-    line: node.vendor || node.productType || "",
-    image: node.featuredImage?.url || "",
-    imageAlt: node.featuredImage?.altText || node.title,
-    price: node.priceRange.minVariantPrice.amount,
-    currency: node.priceRange.minVariantPrice.currencyCode,
-    url: `https://${SHOPIFY_STORE_DOMAIN}/products/${node.handle}`,
-  }));
+  return products;
 }
 
 export async function getProduct(handle) {
@@ -178,7 +204,6 @@ export async function getProduct(handle) {
   };
 }
 
-
 export async function getProductCategories() {
   if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
     throw new Error("Shopify environment variables are missing.");
@@ -247,4 +272,3 @@ export async function getProductCategories() {
 
   return Array.from(categories).sort((a, b) => a.localeCompare(b));
 }
-

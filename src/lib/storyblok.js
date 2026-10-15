@@ -28,6 +28,7 @@ import RecycledMaterials from "@/components/RecycledMaterials";
 import CollectionSpotlight from "@/components/CollectionSpotlight";
 import CollectorVault from "@/components/CollectorsVault";
 import BuildDreamDisplay from "@/components/BuildDreamDisplay";
+import MysteryDrop from "@/components/MysteryDrop";
 
 import { apiPlugin, storyblokInit } from "@storyblok/react";
 
@@ -61,6 +62,7 @@ export const components = {
   CollectionSpotlight: CollectionSpotlight,
   CollectorVault: CollectorVault,
   buildDreamDisplay: BuildDreamDisplay,
+  MysteryDrop: MysteryDrop,
 };
 
 export const getStoryblokApi = storyblokInit({
