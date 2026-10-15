@@ -39,7 +39,7 @@ export default function CollectorVault({ blok }) {
               {blok.eyebrow || "Inside the vault"}
             </p>
 
-            <h2 className="max-w-3xl font-heading text-5xl font-black leading-[0.92] tracking-[-0.07em] sm:text-6xl lg:text-8xl">
+            <h2 className="max-w-3xl font-heading text-5xl font-black leading-[0.92] tracking-[-0.07em] text-foreground sm:text-6xl lg:text-8xl">
               {blok.title || "Not just collected."}
               <span className="block text-[#04d9ff]">
                 {blok.titleAccent || "Discovered."}

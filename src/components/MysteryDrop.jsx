@@ -164,7 +164,7 @@ export default function MysteryDrop({ blok }) {
               {eyebrow}
             </p>
 
-            <h2 className="max-w-3xl font-heading text-5xl font-black leading-[0.92] tracking-[-0.07em] sm:text-6xl lg:text-8xl">
+            <h2 className="max-w-3xl font-heading text-5xl font-black leading-[0.92] tracking-[-0.07em] sm:text-6xl lg:text-8xl text-foreground">
               {heading}
               <span className="block text-[#04d9ff]">
                 {headingAccent}
