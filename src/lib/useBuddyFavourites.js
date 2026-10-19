@@ -5,15 +5,8 @@ import { useCallback, useEffect, useState } from "react";
 const FAVOURITES_KEY = "snuggle-buddies-favourites";
 const FAVOURITES_EVENT = "snuggle-buddies-favourites-change";
 
-export function useBuddyFavourites(buddies = []) {
+export function useBuddyFavourites() {
   const [saved, setSaved] = useState([]);
-
-  const validIds = buddies.map((buddy) => buddy.id);
-
-  const filterSaved = useCallback(
-    (ids) => ids.filter((id) => validIds.includes(id)),
-    [buddies]
-  );
 
   useEffect(() => {
     try {
@@ -23,7 +16,7 @@ export function useBuddyFavourites(buddies = []) {
 
       setSaved(
         Array.isArray(stored)
-          ? filterSaved(stored.filter((id) => typeof id === "string"))
+          ? stored.filter((id) => typeof id === "string")
           : []
       );
     } catch {
@@ -32,7 +25,7 @@ export function useBuddyFavourites(buddies = []) {
 
     function handleFavouritesChange(event) {
       if (Array.isArray(event.detail)) {
-        setSaved(filterSaved(event.detail));
+        setSaved(event.detail);
       }
     }
 
@@ -40,8 +33,11 @@ export function useBuddyFavourites(buddies = []) {
       if (event.key === FAVOURITES_KEY) {
         try {
           const stored = JSON.parse(event.newValue || "[]");
+
           setSaved(
-            Array.isArray(stored) ? filterSaved(stored) : []
+            Array.isArray(stored)
+              ? stored.filter((id) => typeof id === "string")
+              : []
           );
         } catch {
           setSaved([]);
@@ -59,7 +55,7 @@ export function useBuddyFavourites(buddies = []) {
       );
       window.removeEventListener("storage", handleStorageChange);
     };
-  }, [filterSaved]);
+  }, []);
 
   const toggleFavourite = useCallback((id) => {
     setSaved((previous) => {

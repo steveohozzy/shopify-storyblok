@@ -7,7 +7,7 @@ import {
 } from "@/lib/storyblok";
 
 import Header from "@/components/Header";
-import { getBuddies } from "@/lib/storyblok";
+import { getProducts } from "@/lib/shopify";
 import { getProductCategories } from "@/lib/shopify";
 import Footer from "@/components/Footer";
 
@@ -37,7 +37,7 @@ export default async function RootLayout({ children }) {
     }
   );
 
-  const buddies = await getBuddies();
+  const buddies = await getProducts();
   const categories = await getProductCategories();
 
   const header =
